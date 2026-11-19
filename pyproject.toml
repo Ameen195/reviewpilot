@@ -25,7 +25,7 @@ packages = ["src/reviewpilot"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "eval"]
 markers = ["docker: needs Docker and the sandbox image (skipped otherwise)"]
 
 [tool.ruff]

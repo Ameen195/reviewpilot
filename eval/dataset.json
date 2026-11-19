@@ -1,0 +1,842 @@
+[
+ {
+  "id": "ob1",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "Simplify moving_average loop",
+  "bug": "range stops one window early, last average is dropped",
+  "file": "shop/stats.py",
+  "line": 22,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -19,7 +19,7 @@\n     if window <= 0:\n         raise ValueError(\"window must be positive\")\n     out = []\n-    for i in range(len(xs) - window + 1):\n+    for i in range(len(xs) - window):\n         out.append(sum(xs[i : i + window]) / window)\n     return out\n "
+   }
+  ]
+ },
+ {
+  "id": "mn1",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Simplify get_user",
+  "bug": "unpacks fetchone() directly, crashes with TypeError for an unknown id",
+  "file": "shop/users_db.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -14,10 +14,10 @@\n \n \n def get_user(conn, user_id):\n-    row = conn.execute(\"SELECT id, name, email FROM users WHERE id = ?\", (user_id,)).fetchone()\n-    if row is None:\n-        return None\n-    return {\"id\": row[0], \"name\": row[1], \"email\": row[2]}\n+    id_, name, email = conn.execute(\n+        \"SELECT id, name, email FROM users WHERE id = ?\", (user_id,)\n+    ).fetchone()\n+    return {\"id\": id_, \"name\": name, \"email\": email}\n \n \n def find_by_email(conn, email):"
+   }
+  ]
+ },
+ {
+  "id": "sq1",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "Simplify email lookup query",
+  "bug": "email is interpolated into the SQL string",
+  "file": "shop/users_db.py",
+  "line": 24,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -21,7 +21,7 @@\n \n \n def find_by_email(conn, email):\n-    rows = conn.execute(\"SELECT id, name FROM users WHERE email = ?\", (email,)).fetchall()\n+    rows = conn.execute(f\"SELECT id, name FROM users WHERE email = '{email}'\").fetchall()\n     return [{\"id\": r[0], \"name\": r[1]} for r in rows]\n \n "
+   }
+  ]
+ },
+ {
+  "id": "hs1",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Default API key for local dev",
+  "bug": "API key hardcoded as the default",
+  "file": "shop/config.py",
+  "line": 14,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -11,7 +11,7 @@\n \n \n def api_key():\n-    key = os.environ.get(\"SHOP_API_KEY\")\n+    key = os.environ.get(\"SHOP_API_KEY\", \"shoplive-0000-1111-2222-3333\")\n     if not key:\n         raise RuntimeError(\"SHOP_API_KEY is not set\")\n     return key"
+   }
+  ]
+ },
+ {
+  "id": "rc1",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "Counter: drop lock for speed",
+  "bug": "+= on shared state without the lock loses updates across threads",
+  "file": "shop/counter.py",
+  "line": 10,
+  "files": [
+   {
+    "filename": "shop/counter.py",
+    "status": "modified",
+    "patch": "@@ -7,9 +7,8 @@\n         self._lock = threading.Lock()\n \n     def increment(self, n=1):\n-        with self._lock:\n-            self._value += n\n-            return self._value\n+        self._value += n\n+        return self._value\n \n     @property\n     def value(self):"
+   }
+  ]
+ },
+ {
+  "id": "lg1",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "Free shipping from 50",
+  "bug": "> instead of >=, an order of exactly 50 no longer ships free",
+  "file": "shop/orders.py",
+  "line": 38,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -35,4 +35,4 @@\n \n def is_free_shipping(total):\n     \"\"\"Orders of 50 or more ship free.\"\"\"\n-    return total >= 50\n+    return total > 50"
+   }
+  ]
+ },
+ {
+  "id": "rl1",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "read_lines: flatten",
+  "bug": "file opened without with/close",
+  "file": "shop/files.py",
+  "line": 6,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -3,8 +3,8 @@\n \n \n def read_lines(path):\n-    with open(path, encoding=\"utf-8\") as f:\n-        return [line.rstrip(\"\\n\") for line in f]\n+    f = open(path, encoding=\"utf-8\")\n+    return [line.rstrip(\"\\n\") for line in f]\n \n \n def write_report(path, rows):"
+   }
+  ]
+ },
+ {
+  "id": "mt1",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Add variance",
+  "bug": "new variance() has no tests",
+  "file": "shop/stats.py",
+  "line": 7,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -2,6 +2,13 @@\n     if not xs:\n         return 0.0\n     return sum(xs) / len(xs)\n+\n+\n+def variance(xs):\n+    if not xs:\n+        return 0.0\n+    m = mean(xs)\n+    return sum((x - m) ** 2 for x in xs) / len(xs)\n \n \n def median(xs):"
+   }
+  ]
+ },
+ {
+  "id": "c1",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Docstrings for stats",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -1,4 +1,5 @@\n def mean(xs):\n+    \"\"\"Arithmetic mean; 0.0 for an empty list.\"\"\"\n     if not xs:\n         return 0.0\n     return sum(xs) / len(xs)\n@@ -25,6 +26,7 @@\n \n \n def top_n(xs, n):\n+    \"\"\"The n largest values, largest first.\"\"\"\n     return sorted(xs, reverse=True)[:n]\n \n "
+   }
+  ]
+ },
+ {
+  "id": "c2",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Type hints for word_count",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/textutils.py",
+    "status": "modified",
+    "patch": "@@ -13,7 +13,7 @@\n     return text[: limit - len(suffix)] + suffix\n \n \n-def word_count(text):\n+def word_count(text: str) -> int:\n     return len(text.split())\n \n "
+   }
+  ]
+ },
+ {
+  "id": "ob2",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "Tidy paginate",
+  "bug": "pages are 1-based but start no longer subtracts 1, page 1 skips the first page",
+  "file": "shop/orders.py",
+  "line": 25,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -22,7 +22,7 @@\n \n def paginate(items, page, per_page):\n     \"\"\"Items on `page`; pages are numbered from 1.\"\"\"\n-    start = (page - 1) * per_page\n+    start = page * per_page\n     return items[start : start + per_page]\n \n "
+   }
+  ]
+ },
+ {
+  "id": "mn2",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Add coupon_code helper",
+  "bug": "coupon is Optional, .upper() on None raises AttributeError",
+  "file": "shop/orders.py",
+  "line": 30,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -26,6 +26,10 @@\n     return items[start : start + per_page]\n \n \n+def coupon_code(order):\n+    return order.coupon.upper()\n+\n+\n def find_order(orders, order_id):\n     for o in orders:\n         if o.id == order_id:"
+   },
+   {
+    "filename": "tests/test_orders.py",
+    "status": "modified",
+    "patch": "@@ -1,4 +1,4 @@\n-from shop.orders import Order, apply_discount, find_order, is_free_shipping, order_total, paginate\n+from shop.orders import Order, coupon_code, apply_discount, find_order, is_free_shipping, order_total, paginate\n \n \n def test_total_and_discount():\n@@ -15,6 +15,11 @@\n     assert find_order([Order(1)], 2) is None\n \n \n+def test_coupon_code():\n+    assert coupon_code(Order(1, coupon='off10')) == 'OFF10'\n+    assert coupon_code(Order(2)) is None\n+\n+\n def test_free_shipping():\n     assert is_free_shipping(50)\n     assert not is_free_shipping(49.99)"
+   }
+  ]
+ },
+ {
+  "id": "sq2",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "delete_user: build query inline",
+  "bug": "user_id is concatenated into a DELETE statement",
+  "file": "shop/users_db.py",
+  "line": 29,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -26,7 +26,7 @@\n \n \n def delete_user(conn, user_id):\n-    conn.execute(\"DELETE FROM users WHERE id = ?\", (user_id,))\n+    conn.execute(\"DELETE FROM users WHERE id = \" + str(user_id))\n     conn.commit()\n \n "
+   }
+  ]
+ },
+ {
+  "id": "hs2",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Point default DB at the shared server",
+  "bug": "production DB password in the default URL",
+  "file": "shop/config.py",
+  "line": 21,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -18,7 +18,7 @@\n \n \n def db_url():\n-    return os.environ.get(\"SHOP_DB_URL\", \"sqlite:///shop.db\")\n+    return os.environ.get(\"SHOP_DB_URL\", \"postgresql://admin:hunter2-prod@db.prod.internal:5432/shop\")\n \n \n def get_timeout(cfg):"
+   }
+  ]
+ },
+ {
+  "id": "rc2",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "Simplify next_id",
+  "bug": "read-then-write of _next without the lock can hand out duplicate ids",
+  "file": "shop/counter.py",
+  "line": 25,
+  "files": [
+   {
+    "filename": "shop/counter.py",
+    "status": "modified",
+    "patch": "@@ -22,7 +22,6 @@\n         self._lock = threading.Lock()\n \n     def next_id(self):\n-        with self._lock:\n-            i = self._next\n-            self._next += 1\n-            return i\n+        i = self._next\n+        self._next = i + 1\n+        return i"
+   }
+  ]
+ },
+ {
+  "id": "lg2",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "Round discount once",
+  "bug": "returns the discount amount instead of the discounted total",
+  "file": "shop/orders.py",
+  "line": 20,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -17,7 +17,7 @@\n     \"\"\"The total left to pay after taking `percent` % off.\"\"\"\n     if not 0 <= percent <= 100:\n         raise ValueError(\"percent must be between 0 and 100\")\n-    return round(total * (100 - percent) / 100, 2)\n+    return round(total * percent / 100, 2)\n \n \n def paginate(items, page, per_page):"
+   }
+  ]
+ },
+ {
+  "id": "rl2",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "write_report: reuse writer",
+  "bug": "file never closed, rows may not be flushed",
+  "file": "shop/files.py",
+  "line": 11,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -8,10 +8,10 @@\n \n \n def write_report(path, rows):\n-    with open(path, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n-        writer = csv.writer(f)\n-        writer.writerow([\"name\", \"total\"])\n-        writer.writerows(rows)\n+    f = open(path, \"w\", newline=\"\", encoding=\"utf-8\")\n+    writer = csv.writer(f)\n+    writer.writerow([\"name\", \"total\"])\n+    writer.writerows(rows)\n \n \n def file_size(path):"
+   }
+  ]
+ },
+ {
+  "id": "mt2",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Add capitalize_words",
+  "bug": "new capitalize_words() has no tests",
+  "file": "shop/textutils.py",
+  "line": 16,
+  "files": [
+   {
+    "filename": "shop/textutils.py",
+    "status": "modified",
+    "patch": "@@ -13,6 +13,10 @@\n     return text[: limit - len(suffix)] + suffix\n \n \n+def capitalize_words(text):\n+    return \" \".join(w.capitalize() for w in text.split())\n+\n+\n def word_count(text):\n     return len(text.split())\n "
+   }
+  ]
+ },
+ {
+  "id": "c3",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Name the free shipping threshold",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -1,4 +1,6 @@\n from dataclasses import dataclass, field\n+\n+FREE_SHIPPING_MIN = 50\n \n \n @dataclass\n@@ -35,4 +37,4 @@\n \n def is_free_shipping(total):\n     \"\"\"Orders of 50 or more ship free.\"\"\"\n-    return total >= 50\n+    return total >= FREE_SHIPPING_MIN"
+   }
+  ]
+ },
+ {
+  "id": "c4",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Add list_users",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,10 @@\n     conn.commit()\n \n \n+def list_users(conn, limit=100):\n+    rows = conn.execute(\"SELECT id, name FROM users ORDER BY id LIMIT ?\", (limit,)).fetchall()\n+    return [{\"id\": r[0], \"name\": r[1]} for r in rows]\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   },
+   {
+    "filename": "tests/test_users_db.py",
+    "status": "modified",
+    "patch": "@@ -1,4 +1,4 @@\n-from shop.users_db import add_user, connect, count_users, delete_user, find_by_email, get_user\n+from shop.users_db import add_user, connect, count_users, delete_user, find_by_email, get_user, list_users\n \n \n def test_add_and_get():\n@@ -8,6 +8,13 @@\n     assert get_user(conn, 999) is None\n \n \n+def test_list_users():\n+    conn = connect()\n+    add_user(conn, \"Ana\", \"a@x\")\n+    add_user(conn, \"Bo\", \"b@x\")\n+    assert [u[\"name\"] for u in list_users(conn, limit=1)] == [\"Ana\"]\n+\n+\n def test_find_and_delete():\n     conn = connect()\n     uid = add_user(conn, \"Bo\", \"bo@example.com\")"
+   }
+  ]
+ },
+ {
+  "id": "ob3",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "Fix truncate cutting too much",
+  "bug": "+1 makes the result one character longer than limit",
+  "file": "shop/textutils.py",
+  "line": 13,
+  "files": [
+   {
+    "filename": "shop/textutils.py",
+    "status": "modified",
+    "patch": "@@ -10,7 +10,7 @@\n     \"\"\"Shorten text to at most `limit` characters, suffix included.\"\"\"\n     if len(text) <= limit:\n         return text\n-    return text[: limit - len(suffix)] + suffix\n+    return text[: limit - len(suffix) + 1] + suffix\n \n \n def word_count(text):"
+   }
+  ]
+ },
+ {
+  "id": "mn3",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Add item count lookup",
+  "bug": "find_order returns None for an unknown id, .items then crashes",
+  "file": "shop/orders.py",
+  "line": 37,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -33,6 +33,10 @@\n     return None\n \n \n+def item_count(orders, order_id):\n+    return len(find_order(orders, order_id).items)\n+\n+\n def is_free_shipping(total):\n     \"\"\"Orders of 50 or more ship free.\"\"\"\n     return total >= 50"
+   }
+  ]
+ },
+ {
+  "id": "sq3",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "Add user search",
+  "bug": "search term concatenated into a LIKE clause",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,10 @@\n     conn.commit()\n \n \n+def search_users(conn, term):\n+    sql = \"SELECT id, name FROM users WHERE name LIKE '%\" + term + \"%'\"\n+    return conn.execute(sql).fetchall()\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "hs3",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Add payments module",
+  "bug": "Stripe secret key committed in source",
+  "file": "shop/payments.py",
+  "line": 1,
+  "files": [
+   {
+    "filename": "shop/payments.py",
+    "status": "added",
+    "patch": "@@ -0,0 +1,5 @@\n+STRIPE_SECRET = \"stripe-secret-0000-1111-2222\"\n+\n+\n+def charge_headers():\n+    return {\"Authorization\": f\"Bearer {STRIPE_SECRET}\"}"
+   }
+  ]
+ },
+ {
+  "id": "rc3",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "cache.set: hold the lock for less time",
+  "bug": "eviction check and delete run outside the lock",
+  "file": "shop/cache.py",
+  "line": 24,
+  "files": [
+   {
+    "filename": "shop/cache.py",
+    "status": "modified",
+    "patch": "@@ -21,10 +21,10 @@\n             return value\n \n     def set(self, key, value):\n+        if len(self._data) >= self.max_items and key not in self._data:\n+            oldest = min(self._data, key=lambda k: self._data[k][1])\n+            del self._data[oldest]\n         with self._lock:\n-            if len(self._data) >= self.max_items and key not in self._data:\n-                oldest = min(self._data, key=lambda k: self._data[k][1])\n-                del self._data[oldest]\n             self._data[key] = (value, time.monotonic() + self.ttl)\n \n     def __len__(self):"
+   }
+  ]
+ },
+ {
+  "id": "lg3",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "clamp: reorder min/max",
+  "bug": "min/max swapped, always returns lo",
+  "file": "shop/stats.py",
+  "line": 33,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -30,4 +30,4 @@\n \n def clamp(x, lo, hi):\n     \"\"\"Limit x to the range [lo, hi].\"\"\"\n-    return max(lo, min(x, hi))\n+    return min(lo, max(x, hi))"
+   }
+  ]
+ },
+ {
+  "id": "rl3",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "load_config one-liner",
+  "bug": "json.load(open(...)) leaves the file handle open",
+  "file": "shop/config.py",
+  "line": 8,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -5,8 +5,7 @@\n \n \n def load_config(path):\n-    with open(path, encoding=\"utf-8\") as f:\n-        data = json.load(f)\n+    data = json.load(open(path, encoding=\"utf-8\"))\n     return {**DEFAULTS, **data}\n \n "
+   }
+  ]
+ },
+ {
+  "id": "mt3",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Count orders per coupon",
+  "bug": "new coupon_counts() has no tests",
+  "file": "shop/orders.py",
+  "line": 29,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -26,6 +26,14 @@\n     return items[start : start + per_page]\n \n \n+def coupon_counts(orders):\n+    counts = {}\n+    for o in orders:\n+        if o.coupon:\n+            counts[o.coupon] = counts.get(o.coupon, 0) + 1\n+    return counts\n+\n+\n def find_order(orders, order_id):\n     for o in orders:\n         if o.id == order_id:"
+   }
+  ]
+ },
+ {
+  "id": "c5",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Reject non-positive timeouts",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -22,4 +22,7 @@\n \n \n def get_timeout(cfg):\n-    return int(cfg.get(\"timeout\", DEFAULTS[\"timeout\"]))\n+    timeout = int(cfg.get(\"timeout\", DEFAULTS[\"timeout\"]))\n+    if timeout <= 0:\n+        raise ValueError(\"timeout must be positive\")\n+    return timeout"
+   },
+   {
+    "filename": "tests/test_config.py",
+    "status": "modified",
+    "patch": "@@ -19,3 +19,5 @@\n \n def test_get_timeout():\n     assert get_timeout({}) == 30\n+    with pytest.raises(ValueError):\n+        get_timeout({\"timeout\": 0})"
+   }
+  ]
+ },
+ {
+  "id": "c6",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Add TTLCache.clear",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/cache.py",
+    "status": "modified",
+    "patch": "@@ -27,6 +27,10 @@\n                 del self._data[oldest]\n             self._data[key] = (value, time.monotonic() + self.ttl)\n \n+    def clear(self):\n+        with self._lock:\n+            self._data.clear()\n+\n     def __len__(self):\n         with self._lock:\n             return len(self._data)"
+   },
+   {
+    "filename": "tests/test_cache.py",
+    "status": "modified",
+    "patch": "@@ -15,3 +15,10 @@\n     c.set(\"c\", 3)\n     assert len(c) == 2\n     assert c.get(\"a\") is None\n+\n+\n+def test_clear():\n+    c = TTLCache()\n+    c.set(\"a\", 1)\n+    c.clear()\n+    assert len(c) == 0"
+   }
+  ]
+ },
+ {
+  "id": "ob4",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "Add bottom_n helper",
+  "bug": "slice [:n - 1] returns n-1 items",
+  "file": "shop/stats.py",
+  "line": 32,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -28,6 +28,10 @@\n     return sorted(xs, reverse=True)[:n]\n \n \n+def bottom_n(xs, n):\n+    return sorted(xs)[: n - 1]\n+\n+\n def clamp(x, lo, hi):\n     \"\"\"Limit x to the range [lo, hi].\"\"\"\n     return max(lo, min(x, hi))"
+   }
+  ]
+ },
+ {
+  "id": "mn4",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Strip whitespace from API key",
+  "bug": "os.environ.get may return None, .strip() crashes and the clear error is gone",
+  "file": "shop/config.py",
+  "line": 14,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -11,10 +11,7 @@\n \n \n def api_key():\n-    key = os.environ.get(\"SHOP_API_KEY\")\n-    if not key:\n-        raise RuntimeError(\"SHOP_API_KEY is not set\")\n-    return key\n+    return os.environ.get(\"SHOP_API_KEY\").strip()\n \n \n def db_url():"
+   }
+  ]
+ },
+ {
+  "id": "sq4",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "Allow sorting users by column",
+  "bug": "caller-controlled column name goes straight into ORDER BY",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,9 @@\n     conn.commit()\n \n \n+def users_sorted(conn, column):\n+    return conn.execute(f\"SELECT id, name, email FROM users ORDER BY {column}\").fetchall()\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "hs4",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Add S3 upload settings",
+  "bug": "AWS access key pair hardcoded",
+  "file": "shop/config.py",
+  "line": 5,
+  "files": [
+   {
+    "filename": "shop/config.py",
+    "status": "modified",
+    "patch": "@@ -1,5 +1,8 @@\n import json\n import os\n+\n+AWS_ACCESS_KEY_ID = \"ACCESSKEY-0000-1111\"\n+AWS_SECRET_ACCESS_KEY = \"secretkey-0000-1111-2222-3333\"\n \n DEFAULTS = {\"debug\": False, \"timeout\": 30, \"region\": \"eu-west-1\"}\n "
+   }
+  ]
+ },
+ {
+  "id": "rc4",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "Add RateLimiter for API calls",
+  "bug": "check-then-increment of used is not under the lock it creates",
+  "file": "shop/counter.py",
+  "line": 38,
+  "files": [
+   {
+    "filename": "shop/counter.py",
+    "status": "modified",
+    "patch": "@@ -26,3 +26,16 @@\n             i = self._next\n             self._next += 1\n             return i\n+\n+\n+class RateLimiter:\n+    def __init__(self, limit):\n+        self.limit = limit\n+        self.used = 0\n+        self._lock = threading.Lock()\n+\n+    def allow(self):\n+        if self.used < self.limit:\n+            self.used += 1\n+            return True\n+        return False"
+   }
+  ]
+ },
+ {
+  "id": "lg4",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "order_total: use generator",
+  "bug": "price + qty instead of price * qty",
+  "file": "shop/orders.py",
+  "line": 13,
+  "files": [
+   {
+    "filename": "shop/orders.py",
+    "status": "modified",
+    "patch": "@@ -10,7 +10,7 @@\n \n def order_total(order):\n     \"\"\"Order value: each item's price times its quantity, summed.\"\"\"\n-    return sum(price * qty for price, qty in order.items)\n+    return sum(price + qty for price, qty in order.items)\n \n \n def apply_discount(total, percent):"
+   },
+   {
+    "filename": "tests/test_orders.py",
+    "status": "modified",
+    "patch": "@@ -4,6 +4,10 @@\n def test_total_and_discount():\n     assert order_total(Order(1, [(10, 2)])) == 20\n     assert apply_discount(200, 10) == 180\n+\n+\n+def test_total_two_items():\n+    assert order_total(Order(1, [(10, 2), (5, 3)])) == 35\n \n \n def test_paginate():"
+   }
+  ]
+ },
+ {
+  "id": "rl4",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "Add count_in_file for reports",
+  "bug": "sqlite connection opened and never closed",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,10 @@\n     conn.commit()\n \n \n+def count_in_file(path):\n+    conn = sqlite3.connect(path)\n+    return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "mt4",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Add ensure_dir",
+  "bug": "new ensure_dir() has no tests",
+  "file": "shop/files.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -14,6 +14,11 @@\n         writer.writerows(rows)\n \n \n+def ensure_dir(path):\n+    os.makedirs(path, exist_ok=True)\n+    return path\n+\n+\n def file_size(path):\n     return os.path.getsize(path)\n "
+   }
+  ]
+ },
+ {
+  "id": "c7",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Add Counter.decrement",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/counter.py",
+    "status": "modified",
+    "patch": "@@ -9,6 +9,11 @@\n     def increment(self, n=1):\n         with self._lock:\n             self._value += n\n+            return self._value\n+\n+    def decrement(self, n=1):\n+        with self._lock:\n+            self._value -= n\n             return self._value\n \n     @property"
+   },
+   {
+    "filename": "tests/test_counter.py",
+    "status": "modified",
+    "patch": "@@ -5,6 +5,7 @@\n     c = Counter()\n     c.increment()\n     assert c.increment(2) == 3\n+    assert c.decrement() == 2\n \n \n def test_ids():"
+   }
+  ]
+ },
+ {
+  "id": "c8",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Configurable report header",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -7,10 +7,10 @@\n         return [line.rstrip(\"\\n\") for line in f]\n \n \n-def write_report(path, rows):\n+def write_report(path, rows, header=(\"name\", \"total\")):\n     with open(path, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n         writer = csv.writer(f)\n-        writer.writerow([\"name\", \"total\"])\n+        writer.writerow(list(header))\n         writer.writerows(rows)\n \n "
+   }
+  ]
+ },
+ {
+  "id": "ob5",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "chunk: avoid empty trailing chunk",
+  "bug": "range end len(items) - 1 drops the last item when len % size == 1",
+  "file": "shop/textutils.py",
+  "line": 23,
+  "files": [
+   {
+    "filename": "shop/textutils.py",
+    "status": "modified",
+    "patch": "@@ -20,7 +20,7 @@\n def chunk(items, size):\n     if size <= 0:\n         raise ValueError(\"size must be positive\")\n-    return [items[i : i + size] for i in range(0, len(items), size)]\n+    return [items[i : i + size] for i in range(0, len(items) - 1, size)]\n \n \n def initials(name):"
+   },
+   {
+    "filename": "tests/test_textutils.py",
+    "status": "modified",
+    "patch": "@@ -18,5 +18,9 @@\n     assert chunk([1, 2, 3, 4], 2) == [[1, 2], [3, 4]]\n \n \n+def test_chunk_odd():\n+    assert chunk([1, 2, 3], 2) == [[1, 2], [3]]\n+\n+\n def test_initials():\n     assert initials(\"ada  lovelace\") == \"AL\""
+   }
+  ]
+ },
+ {
+  "id": "mn5",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Streamline cache get",
+  "bug": "unpacks dict.get() result, a missing key raises TypeError instead of returning default",
+  "file": "shop/cache.py",
+  "line": 14,
+  "files": [
+   {
+    "filename": "shop/cache.py",
+    "status": "modified",
+    "patch": "@@ -11,10 +11,7 @@\n \n     def get(self, key, default=None):\n         with self._lock:\n-            item = self._data.get(key)\n-            if item is None:\n-                return default\n-            value, expires = item\n+            value, expires = self._data.get(key)\n             if expires < time.monotonic():\n                 del self._data[key]\n                 return default"
+   }
+  ]
+ },
+ {
+  "id": "sq5",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "get_user: use string formatting",
+  "bug": "user_id %-formatted into the query",
+  "file": "shop/users_db.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -14,7 +14,7 @@\n \n \n def get_user(conn, user_id):\n-    row = conn.execute(\"SELECT id, name, email FROM users WHERE id = ?\", (user_id,)).fetchone()\n+    row = conn.execute(\"SELECT id, name, email FROM users WHERE id = %s\" % user_id).fetchone()\n     if row is None:\n         return None\n     return {\"id\": row[0], \"name\": row[1], \"email\": row[2]}"
+   }
+  ]
+ },
+ {
+  "id": "hs5",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Upload reports to the dashboard",
+  "bug": "GitHub token hardcoded in the request headers",
+  "file": "shop/files.py",
+  "line": 18,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -14,6 +14,10 @@\n         writer.writerows(rows)\n \n \n+def upload_headers():\n+    return {\"Authorization\": \"Bearer dashtoken-0000-1111-2222-3333\"}\n+\n+\n def file_size(path):\n     return os.path.getsize(path)\n "
+   }
+  ]
+ },
+ {
+  "id": "rc5",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "Add add_user_unique",
+  "bug": "check-then-insert with no UNIQUE constraint, two callers can both insert",
+  "file": "shop/users_db.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -11,6 +11,12 @@\n     cur = conn.execute(\"INSERT INTO users (name, email) VALUES (?, ?)\", (name, email))\n     conn.commit()\n     return cur.lastrowid\n+\n+\n+def add_user_unique(conn, name, email):\n+    if find_by_email(conn, email):\n+        raise ValueError(\"email already registered\")\n+    return add_user(conn, name, email)\n \n \n def get_user(conn, user_id):"
+   }
+  ]
+ },
+ {
+  "id": "lg5",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "median: avoid float noise",
+  "bug": "// floors the even-length median",
+  "file": "shop/stats.py",
+  "line": 15,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -12,7 +12,7 @@\n     mid = len(s) // 2\n     if len(s) % 2:\n         return s[mid]\n-    return (s[mid - 1] + s[mid]) / 2\n+    return (s[mid - 1] + s[mid]) // 2\n \n \n def moving_average(xs, window):"
+   },
+   {
+    "filename": "tests/test_stats.py",
+    "status": "modified",
+    "patch": "@@ -13,6 +13,10 @@\n         median([])\n \n \n+def test_median_even():\n+    assert median([1, 2]) == 1.5\n+\n+\n def test_moving_average():\n     assert moving_average([1, 2, 3, 4], 2) == [1.5, 2.5, 3.5]\n "
+   }
+  ]
+ },
+ {
+  "id": "rl5",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "Add line_count",
+  "bug": "open() in a generator, handle never closed",
+  "file": "shop/files.py",
+  "line": 18,
+  "files": [
+   {
+    "filename": "shop/files.py",
+    "status": "modified",
+    "patch": "@@ -14,6 +14,10 @@\n         writer.writerows(rows)\n \n \n+def line_count(path):\n+    return sum(1 for _ in open(path, encoding=\"utf-8\"))\n+\n+\n def file_size(path):\n     return os.path.getsize(path)\n "
+   }
+  ]
+ },
+ {
+  "id": "mt5",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Counter.reset",
+  "bug": "new reset() has no tests",
+  "file": "shop/counter.py",
+  "line": 14,
+  "files": [
+   {
+    "filename": "shop/counter.py",
+    "status": "modified",
+    "patch": "@@ -10,6 +10,10 @@\n         with self._lock:\n             self._value += n\n             return self._value\n+\n+    def reset(self):\n+        with self._lock:\n+            self._value = 0\n \n     @property\n     def value(self):"
+   }
+  ]
+ },
+ {
+  "id": "c9",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Use fsum in mean for precision",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/stats.py",
+    "status": "modified",
+    "patch": "@@ -1,7 +1,10 @@\n+import math\n+\n+\n def mean(xs):\n     if not xs:\n         return 0.0\n-    return sum(xs) / len(xs)\n+    return math.fsum(xs) / len(xs)\n \n \n def median(xs):"
+   }
+  ]
+ },
+ {
+  "id": "c10",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Document chunk",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/textutils.py",
+    "status": "modified",
+    "patch": "@@ -18,6 +18,7 @@\n \n \n def chunk(items, size):\n+    \"\"\"Split items into lists of at most `size` items.\"\"\"\n     if size <= 0:\n         raise ValueError(\"size must be positive\")\n     return [items[i : i + size] for i in range(0, len(items), size)]"
+   }
+  ]
+ }
+]

@@ -1,0 +1,19 @@
+{
+ "_note": "Human verdicts for ambiguous line matches (see eval/score.py docstring). Each listed finding is identified by file, line and reviewer category in eval/results/prs/<id>.json.",
+ "rl3": {
+  "why": "Only code finding at the leak line is a path-traversal warning; the leak itself is not reported by a code reviewer. Miss.",
+  "unrelated": [{"file": "shop/config.py", "line": 8, "category": "security"}]
+ },
+ "rl4": {
+  "why": "Path-traversal warning next to the real leak finding (line 34) is a false positive, not a duplicate.",
+  "unrelated": [{"file": "shop/users_db.py", "line": 33, "category": "security"}]
+ },
+ "rl5": {
+  "why": "Only code finding at the leak line is a path-traversal warning; the leak itself is not reported. Miss.",
+  "unrelated": [{"file": "shop/files.py", "line": 17, "category": "security"}]
+ },
+ "hs4": {
+  "why": "Lines 4 and 5 are two separate planted secrets (access key id and secret key), not a duplicate.",
+  "not_duplicate": [{"file": "shop/config.py", "line": 4, "category": "security"}]
+ }
+}
