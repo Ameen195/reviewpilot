@@ -1,0 +1,75 @@
+{
+ "pr": {
+  "number": 7,
+  "title": "Tweak calc",
+  "head": {
+   "sha": "abc1234"
+  },
+  "base": {
+   "sha": "def5678"
+  }
+ },
+ "files": [
+  {
+   "filename": "app/calc.py",
+   "status": "modified",
+   "additions": 3,
+   "deletions": 2,
+   "patch": "@@ -2,7 +2,8 @@\n \n \n def add(a, b):\n-    return a+b\n+    # sum two numbers\n+    return a + b\n \n \n def average(xs):\n@@ -17,4 +18,4 @@\n         return sorted(xs)[-1]\n \n     def spread(self, xs):\n-        return max(xs) - min(xs)\n+        return max(xs) - min(xs) + 1"
+  },
+  {
+   "filename": "app/util.py",
+   "status": "renamed",
+   "additions": 1,
+   "deletions": 1,
+   "patch": "@@ -1,2 +1,2 @@\n def clean(s):\n-    return s.strip()\n+    return s.strip().lower()",
+   "previous_filename": "app/helpers.py"
+  },
+  {
+   "filename": "docs/b.md",
+   "status": "renamed",
+   "additions": 0,
+   "deletions": 0,
+   "previous_filename": "docs/a.md"
+  },
+  {
+   "filename": "app/new_mod.py",
+   "status": "added",
+   "additions": 3,
+   "deletions": 0,
+   "patch": "@@ -0,0 +1,3 @@\n+import os\n+\n+TOKEN = os.environ['TOKEN']"
+  },
+  {
+   "filename": "app/old.py",
+   "status": "removed",
+   "additions": 0,
+   "deletions": 2,
+   "patch": "@@ -1,2 +0,0 @@\n-def legacy():\n-    return 1"
+  },
+  {
+   "filename": "poetry.lock",
+   "status": "modified",
+   "additions": 1,
+   "deletions": 1,
+   "patch": "@@ -1 +1 @@\n-a\n+b"
+  },
+  {
+   "filename": "logo.png",
+   "status": "added",
+   "additions": 0,
+   "deletions": 0
+  },
+  {
+   "filename": "static/app.min.js",
+   "status": "modified",
+   "additions": 1,
+   "deletions": 1,
+   "patch": "@@ -1 +1 @@\n-a\n+b"
+  }
+ ],
+ "contents": {
+  "app/calc.py": "import math\n\n\ndef add(a, b):\n    # sum two numbers\n    return a + b\n\n\ndef average(xs):\n    total = 0\n    for x in xs:\n        total += x\n    return total / len(xs)\n\n\nclass Stats:\n    def top(self, xs):\n        return sorted(xs)[-1]\n\n    def spread(self, xs):\n        return max(xs) - min(xs) + 1\n",
+  "app/util.py": "def clean(s):\n    return s.strip().lower()\n",
+  "app/new_mod.py": "import os\n\nTOKEN = os.environ['TOKEN']\n"
+ }
+}
