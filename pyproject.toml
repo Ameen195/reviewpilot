@@ -5,6 +5,8 @@ description = "AI code review agent as a GitHub App"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.165.0",
+    "groq>=1.7.0",
+    "langgraph>=1.2.23",
     "pydantic-settings>=2.16.3",
     "pygithub>=2.10.0",
     "tree-sitter>=0.26.1",

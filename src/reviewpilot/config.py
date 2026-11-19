@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     github_webhook_secret: str = ""
     github_app_id: str = ""
+    groq_api_key: str = ""
     github_private_key_path: str = (
         ""  # path to the .pem; the file is read only inside github/auth.py
     )
