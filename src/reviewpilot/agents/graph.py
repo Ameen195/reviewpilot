@@ -60,9 +60,14 @@ def _reviewer(name: str, model: str, llm: Callable, ctx: PRContext):
         found, tokens, errors = [], 0, []
         paths = [f.path for f in ctx.files]
         for f in ctx.files:
+            if name == "tests" and is_test_file(f.path):
+                continue  # tests are what this reviewer looks for, not what it reviews
             others = [p for p in paths if p != f.path]
+            # the tests reviewer must see the PR's tests for this file, not just their names
+            related = [t for t in ctx.files if name == "tests" and
+                       PurePosixPath(t.path).name in tests_for(f.path)]  # fmt: skip
             try:
-                prompt = user_prompt(ctx.title, f, others, state.get("tests"))
+                prompt = user_prompt(ctx.title, f, others, state.get("tests"), related)
                 data, used = llm(model, system_prompt(name), prompt)
             except Exception as e:  # noqa: BLE001 - one failed call must not sink the whole review
                 errors.append(f"{name} {f.path}: {e}")
@@ -99,10 +104,25 @@ def merge(state: State) -> State:
     return {"merged": [*kept.values(), *pr_level]}
 
 
+def is_test_file(path: str) -> bool:
+    name = PurePosixPath(path).name
+    return name.startswith("test_") or name.endswith("_test.py")
+
+
+def tests_for(path: str) -> set[str]:
+    """File names of the tests that cover `path`: test_<stem>.py and <stem>_test.py."""
+    stem = PurePosixPath(path).stem
+    return {f"test_{stem}.py", f"{stem}_test.py"}
+
+
 def failing_test_touches(path: str, failed: list[str]) -> bool:
-    """A failing test lives in this file, or in test_<stem>.py / <stem>_test.py."""
-    p = PurePosixPath(path)
-    names = {p.name, f"test_{p.stem}.py", f"{p.stem}_test.py"}
+    """A failing test lives in test_<stem>.py / <stem>_test.py of this source file.
+
+    Never true for a test file itself: its failure is evidence about the code it tests.
+    """
+    if is_test_file(path):
+        return False
+    names = tests_for(path)
     return any(PurePosixPath(t.split(" ")[0].split("::")[0]).name in names for t in failed)
 
 
@@ -116,7 +136,11 @@ def filter_findings(state: State, ctx: PRContext) -> State:
     tests = state.get("tests")
     failed = tests.failed if tests and not tests.error else []
     inline, summary = [], []
+    code = [f for f in state["merged"] if f.category != "tests"]
+    covered = {n for f in code if not is_test_file(f.file) for n in tests_for(f.file)}
     for f in state["merged"]:
+        if f in code and PurePosixPath(f.file).name in covered:
+            continue  # restates a bug already reported on the code this test file covers
         if f.category != "tests" and failing_test_touches(f.file, failed):
             f = _bump(f)
         if f.category != "tests" and f.line is not None and diffs[f.file].can_comment(f.line):

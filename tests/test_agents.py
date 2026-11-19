@@ -6,6 +6,7 @@ from reviewpilot.agents import llm as llm_mod
 from reviewpilot.agents.graph import Finding, filter_findings, merge, review
 from reviewpilot.agents.prompts import TAG, number_patch, user_prompt
 from reviewpilot.context.build import build_context
+from reviewpilot.sandbox.runner import SandboxResult
 
 FX = json.loads((Path(__file__).parent / "fixtures" / "pr_mixed.json").read_text())
 
@@ -134,3 +135,35 @@ def test_chat_json_caches(tmp_path, monkeypatch):
     assert llm_mod.chat_json("m", "s", "u", client) == ({"findings": []}, 42)
     assert llm_mod.chat_json("m", "s", "u", client) == ({"findings": []}, 0)
     assert len(n) == 1 and n[0]["reasoning_effort"] == "low" and n[0]["max_tokens"] >= 300
+
+
+def test_test_file_echo_dropped_and_test_files_never_bumped():
+    src = F(6, "bug").model_copy(update={"file": "app/calc.py"})
+    echo = F(None, "bug").model_copy(update={"file": "tests/test_calc.py"})
+    t = SandboxResult(failed=["tests/test_calc.py::test_add - AssertionError"])
+    out = filter_findings({"merged": [src, echo], "tests": t}, ctx())
+    assert [f.file for f in out["inline"] + out["summary"]] == ["app/calc.py"]
+    assert out["inline"][0].bumped_by_tests
+    alone = filter_findings({"merged": [echo], "tests": t}, ctx())["summary"]
+    assert alone[0].file == "tests/test_calc.py" and not alone[0].bumped_by_tests
+
+
+def test_tests_reviewer_sees_pr_tests_and_skips_test_files():
+    files = [
+        {"filename": "app/calc.py", "status": "modified", "patch": "@@ -1 +1,2 @@\n x = 1\n+y = 2"},
+        {"filename": "tests/test_calc.py", "status": "modified",
+         "patch": "@@ -1 +1,2 @@\n a = 1\n+def test_y(): pass"},
+    ]  # fmt: skip
+    c = build_context({"number": 1, "title": "t", "head": {"sha": "s"}}, files, lambda p: None)
+    seen = []
+
+    def llm(model, system, user):
+        seen.append((system, user))
+        return {"findings": []}, 1
+
+    review(c, llm)
+    tests_calls = [u for s, u in seen if "test coverage" in s]
+    assert len(tests_calls) == 1 and "File: app/calc.py" in tests_calls[0]
+    assert "Tests changed in this PR: tests/test_calc.py" in tests_calls[0]
+    bug_calls = [u for s, u in seen if "logic bugs" in s]
+    assert len(bug_calls) == 2 and not any("Tests changed" in u for u in bug_calls)

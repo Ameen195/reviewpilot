@@ -25,11 +25,13 @@ Reply with JSON only:
 
 FOCUS = {
     "bug": "logic bugs: wrong results, off-by-one, unhandled edge cases (empty input, zero, None), "
-    "crashes, wrong conditions, resource leaks.",
+    "crashes, wrong conditions, resource leaks, race conditions (shared state read or changed "
+    "without its lock, check-then-act).",
     "security": "security issues: injection (SQL, shell, path), hardcoded secrets or credentials, "
     "unsafe deserialization, missing auth checks, sensitive data exposure.",
     "tests": "test coverage: new or changed behaviour that has no tests in this PR. Use line null "
-    "for a general 'no tests for X' finding. Do not report bugs or security issues.",
+    "for a general 'no tests for X' finding. Tests changed in this PR for this file are shown "
+    "when there are any; count them as coverage. Do not report bugs or security issues.",
 }
 
 
@@ -62,7 +64,11 @@ def format_tests(t: SandboxResult) -> str:
 
 
 def user_prompt(
-    title: str, f: FileContext, other_files: list[str], tests: SandboxResult | None = None
+    title: str,
+    f: FileContext,
+    other_files: list[str],
+    tests: SandboxResult | None = None,
+    related_tests: list[FileContext] = (),
 ) -> str:
     parts = [f"PR title: {title}", f"File: {f.path} ({f.status})"]
     if other_files:
@@ -71,6 +77,8 @@ def user_prompt(
     for s in f.snippets:
         body = "\n".join(f"{i:>5}  {t}" for i, t in enumerate(s.text.splitlines(), s.start))
         parts += [f"Surrounding code: {s.name} (lines {s.start}-{s.end})", body]
+    for t in related_tests:
+        parts += [f"Tests changed in this PR: {t.path} ({t.status})", number_patch(t.patch)]
     if tests is not None:  # test output is PR-controlled, so it stays inside the tag
         parts += ["Test results (sandbox):", format_tests(tests)]
     text = "\n".join(parts).replace(f"</{TAG}>", f"<\\/{TAG}>")  # no breaking out of the tag

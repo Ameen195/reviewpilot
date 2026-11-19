@@ -27,17 +27,14 @@ import argparse
 import json
 import statistics
 import sys
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 import plant
 from run import RESULTS, git_commit, load_result, pr_hash
 
+from reviewpilot.agents.graph import is_test_file
+
 LINE_TOLERANCE = 2
-
-
-def is_test_file(path: str) -> bool:
-    name = PurePosixPath(path).name
-    return name.startswith("test_") or name.endswith("_test.py")
 
 
 def _key(f: dict) -> tuple:
