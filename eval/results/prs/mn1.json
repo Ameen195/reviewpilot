@@ -1,0 +1,47 @@
+{
+ "id": "mn1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "6b7171818c4978c1",
+ "date": "2026-11-19",
+ "tokens": 0,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 0,
+  "openai/gpt-oss-20b": 0
+ },
+ "latency_s": 0.99,
+ "llm_s": 0.02,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_users_db.py::test_add_and_get - TypeError: cannot unpack no..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 17,
+   "severity": "high",
+   "category": "bug",
+   "message": "If the user does not exist, fetchone() returns None, causing a TypeError when unpacking into id_, name, email.",
+   "suggested_fix": "Check for None before unpacking, e.g., row = conn.execute(...).fetchone(); if row is None: return None; id_, name, email = row",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "get_user now unconditionally unpacks the result of fetchone(), causing a TypeError when no user is found. No tests cover the case where the user does not exist.",
+   "suggested_fix": "Add a check for None before unpacking, e.g., row = conn.execute(...).fetchone(); if row is None: return None; else: id_, name, email = row; return {...}",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

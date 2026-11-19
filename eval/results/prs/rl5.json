@@ -1,0 +1,45 @@
+{
+ "id": "rl5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "dd38057097601d23",
+ "date": "2026-11-19",
+ "tokens": 1986,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 627,
+  "openai/gpt-oss-120b": 1359
+ },
+ "latency_s": 7.38,
+ "llm_s": 7.58,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "medium",
+   "category": "security",
+   "message": "The new line_count function opens a file path provided by the caller without any validation, potentially allowing path traversal or unauthorized file reads.",
+   "suggested_fix": "Validate the input path (e.g., ensure it is within an allowed directory) before opening, or use safe file handling utilities.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function line_count has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that create temporary files with known line counts and assert line_count returns the correct value.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

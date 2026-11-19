@@ -1,0 +1,57 @@
+{
+ "id": "lg5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "f9befd65dd9803d7",
+ "date": "2026-11-19",
+ "tokens": 4657,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 2957,
+  "openai/gpt-oss-20b": 1700
+ },
+ "latency_s": 14.17,
+ "llm_s": 18.42,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_stats.py::test_median_even - assert 1 == 1.5"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 15,
+   "severity": "critical",
+   "category": "bug",
+   "message": "Using integer division (//) returns an int, causing incorrect median for even-sized lists (e.g., expected 1.5 got 1).",
+   "suggested_fix": "Replace // with / to perform true division: return (s[mid - 1] + s[mid]) / 2",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "tests/test_stats.py",
+   "line": null,
+   "severity": "high",
+   "category": "bug",
+   "message": "median([1,2]) returns 1 instead of the correct 1.5, indicating integer division or wrong index handling for even-sized lists.",
+   "suggested_fix": "Update median function to average the two middle values using float division, e.g., return (sorted_vals[mid-1] + sorted_vals[mid]) / 2.0 for even lengths.",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  },
+  {
+   "file": "shop/stats.py",
+   "line": 15,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The median function now uses integer division for even-length lists, but there are no tests covering the behavior with non-integer inputs (e.g., floats).",
+   "suggested_fix": "Add a test that passes a list of floats to median and asserts the integer result, e.g., assert median([1.2, 3.4, 5.6, 7.8]) == 4.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "rc4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "214c8e72caef08ac",
+ "date": "2026-11-19",
+ "tokens": 2669,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 881,
+  "openai/gpt-oss-120b": 1788
+ },
+ "latency_s": 8.62,
+ "llm_s": 9.38,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/counter.py",
+   "line": 38,
+   "severity": "medium",
+   "category": "bug",
+   "message": "The allow method updates shared state without acquiring the lock, leading to race conditions in multithreaded use.",
+   "suggested_fix": "Wrap the check and increment in a with self._lock block, e.g.,\nwith self._lock:\n    if self.used < self.limit:\n        self.used += 1\n        return True\n    return False",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new RateLimiter class and its allow method.",
+   "suggested_fix": "Add unit tests that instantiate RateLimiter, call allow, and verify limit enforcement and thread safety.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,48 @@
+{
+ "id": "lg4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "db9b128dc63daf5d",
+ "date": "2026-11-19",
+ "tokens": 4302,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1439,
+  "openai/gpt-oss-120b": 2863
+ },
+ "latency_s": 16.28,
+ "llm_s": 22.71,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_total_and_discount - assert 12 == 20",
+   "tests/test_orders.py::test_total_two_items - assert 20 == 35"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 13,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The function now adds price and quantity instead of multiplying, producing incorrect totals.",
+   "suggested_fix": "Change to sum(price * qty for price, qty in order.items())",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "tests/test_orders.py",
+   "line": null,
+   "severity": "critical",
+   "category": "bug",
+   "message": "order_total returns incorrect total (12 instead of 20) and fails for multiple items, likely due to misuse of a generator that yields only quantities or prices, causing wrong summation.",
+   "suggested_fix": "Rewrite order_total to correctly sum price * quantity for each item, e.g., `return sum(price * qty for price, qty in order.items)`.",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

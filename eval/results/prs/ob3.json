@@ -1,0 +1,47 @@
+{
+ "id": "ob3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "a1ec871a43647d4c",
+ "date": "2026-11-19",
+ "tokens": 2135,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1370,
+  "openai/gpt-oss-20b": 765
+ },
+ "latency_s": 5.75,
+ "llm_s": 6.09,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_textutils.py::test_truncate - AssertionError: assert 'hello..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/textutils.py",
+   "line": 13,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The truncation now returns one extra character before the suffix, exceeding the limit and causing test failure.",
+   "suggested_fix": "Change to `return text[: limit - len(suffix)] + suffix` (remove the +1).",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/textutils.py",
+   "line": 13,
+   "severity": "medium",
+   "category": "tests",
+   "message": "New truncate logic adds an extra character before suffix, but no tests cover this updated behavior.",
+   "suggested_fix": "Add tests verifying that truncate correctly includes the extra character when shortening text.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

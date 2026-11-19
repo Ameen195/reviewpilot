@@ -1,0 +1,47 @@
+{
+ "id": "lg1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "087c6d7b5547edb0",
+ "date": "2026-11-19",
+ "tokens": 2033,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1200,
+  "openai/gpt-oss-20b": 833
+ },
+ "latency_s": 1.56,
+ "llm_s": 1.7,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_free_shipping - assert False"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 38,
+   "severity": "high",
+   "category": "bug",
+   "message": "The function now returns True only for totals greater than 50, excluding exactly 50, contradicting the docstring and causing test failure.",
+   "suggested_fix": "Change the condition back to >= 50",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 38,
+   "severity": "low",
+   "category": "tests",
+   "message": "New behavior (free shipping only for totals >50) is not covered by tests; no test verifies that orders above 50 ship free.",
+   "suggested_fix": "Add a test case asserting that is_free_shipping(51) returns True and that is_free_shipping(50) returns False.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

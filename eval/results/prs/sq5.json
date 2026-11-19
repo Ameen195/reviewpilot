@@ -1,0 +1,45 @@
+{
+ "id": "sq5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "500ccdb77c526df8",
+ "date": "2026-11-19",
+ "tokens": 2361,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 819,
+  "openai/gpt-oss-120b": 1542
+ },
+ "latency_s": 7.72,
+ "llm_s": 8.21,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 17,
+   "severity": "high",
+   "category": "security",
+   "message": "SQL query is built using string formatting, allowing SQL injection if user_id is untrusted.",
+   "suggested_fix": "Use a parameterized query: conn.execute(\"SELECT id, name, email FROM users WHERE id = ?\", (user_id,)).fetchone()",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 17,
+   "severity": "medium",
+   "category": "tests",
+   "message": "get_user now uses string formatting for SQL query, which can lead to SQL injection if user_id is not sanitized. No tests cover this new behavior.",
+   "suggested_fix": "Add unit tests that pass a malicious user_id (e.g., \"1; DROP TABLE users;\") and verify that the query is safe or that the function raises an exception. Alternatively, revert to parameterized queries.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "hs2",
+ "commit": "ae20042e7ef5508dd6a5833ee9de46debfb2842b",
+ "dirty": true,
+ "pr_hash": "1f635b23d53932af",
+ "date": "2026-11-19",
+ "tokens": 1961,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1290,
+  "openai/gpt-oss-20b": 671
+ },
+ "latency_s": 1.69,
+ "llm_s": 1.41,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 21,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded database credentials are embedded in the default DB URL, exposing secret password.",
+   "suggested_fix": "Replace the hardcoded credentials with a placeholder and require them to be provided via environment variables or a secure secret manager.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": 21,
+   "severity": "low",
+   "category": "tests",
+   "message": "Default database URL changed to PostgreSQL, but no tests verify this behavior.",
+   "suggested_fix": "Add a test that checks db_url() returns the new default when SHOP_DB_URL is unset.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

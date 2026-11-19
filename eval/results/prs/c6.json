@@ -1,0 +1,34 @@
+{
+ "id": "c6",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "da3f150a44f3e457",
+ "date": "2026-11-19",
+ "tokens": 4982,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1673,
+  "openai/gpt-oss-120b": 3309
+ },
+ "latency_s": 18.6,
+ "llm_s": 26.96,
+ "tests": {
+  "passed": 25,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/cache.py",
+   "line": 30,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new TTLCache.clear method.",
+   "suggested_fix": "Add tests that verify clear removes all items and respects thread safety.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

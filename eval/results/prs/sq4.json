@@ -1,0 +1,55 @@
+{
+ "id": "sq4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "9603b8d039c333fe",
+ "date": "2026-11-19",
+ "tokens": 2055,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 643,
+  "openai/gpt-oss-120b": 1412
+ },
+ "latency_s": 6.01,
+ "llm_s": 7.18,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "high",
+   "category": "security",
+   "message": "The function builds an SQL query by directly interpolating the 'column' argument, allowing SQL injection via crafted column names.",
+   "suggested_fix": "Validate 'column' against a whitelist of allowed column names before including it in the query, e.g., if column in ('id','name','email'): ... else raise error.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "medium",
+   "category": "bug",
+   "message": "Direct string interpolation of the column name into the SQL query can lead to SQL injection or runtime errors if an invalid column is provided.",
+   "suggested_fix": "Validate the column against an allowed whitelist before constructing the query, e.g., if column in ('id','name','email'): ... else raise ValueError.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function users_sorted has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that verify sorting by valid columns and handle invalid column names.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

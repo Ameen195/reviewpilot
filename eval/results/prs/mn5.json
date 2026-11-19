@@ -1,0 +1,48 @@
+{
+ "id": "mn5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "5b94a8e859291ab9",
+ "date": "2026-11-19",
+ "tokens": 2365,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 911,
+  "openai/gpt-oss-120b": 1454
+ },
+ "latency_s": 8.41,
+ "llm_s": 11.92,
+ "tests": {
+  "passed": 22,
+  "failed": [
+   "tests/test_cache.py::test_set_get - TypeError: cannot unpack non-itera...",
+   "tests/test_cache.py::test_evicts_oldest - TypeError: cannot unpack non..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/cache.py",
+   "line": 14,
+   "severity": "critical",
+   "category": "bug",
+   "message": "Unpacking result of self._data.get(key) without checking for missing key causes TypeError when key is absent.",
+   "suggested_fix": "Use item = self._data.get(key); if item is None: return default; else: value, expires = item",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/cache.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The updated get method unconditionally unpacks the result of self._data.get(key), which returns None for missing keys, leading to a TypeError. No tests cover the scenario where a key is absent and a default value should be returned.",
+   "suggested_fix": "Add a check: item = self._data.get(key); if item is None: return default; else: value, expires = item",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

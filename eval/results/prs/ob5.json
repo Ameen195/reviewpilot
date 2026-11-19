@@ -1,0 +1,57 @@
+{
+ "id": "ob5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "b4d708dd15fe517d",
+ "date": "2026-11-19",
+ "tokens": 4663,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1687,
+  "openai/gpt-oss-120b": 2976
+ },
+ "latency_s": 9.89,
+ "llm_s": 12.46,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_textutils.py::test_chunk_odd - assert [[1, 2]] == [[1, 2], ..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/textutils.py",
+   "line": 23,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The range stop is changed to len(items) - 1, causing the last chunk to be omitted when the list length is not an exact multiple of size.",
+   "suggested_fix": "return [items[i:i+size] for i in range(0, len(items), size)]",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "tests/test_textutils.py",
+   "line": null,
+   "severity": "high",
+   "category": "bug",
+   "message": "The `chunk` function drops the last incomplete chunk when the input list size isn't a multiple of the chunk size, causing test_chunk_odd to fail.",
+   "suggested_fix": "Modify the chunk implementation to always include the final slice, even if its length is less than the requested size (e.g., iterate with range(0, len(seq), size) and append seq[i:i+size] for each i).",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  },
+  {
+   "file": "shop/textutils.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The updated chunk function now excludes the last element of the input list, but there are no tests covering this new behavior. This could lead to unnoticed regressions or incorrect usage.",
+   "suggested_fix": "Add tests that verify chunk correctly handles lists where the last element would otherwise form an incomplete chunk, ensuring the function behaves as intended.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

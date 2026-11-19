@@ -1,0 +1,47 @@
+{
+ "id": "lg3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "e786342b5d036057",
+ "date": "2026-11-19",
+ "tokens": 2013,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 747,
+  "openai/gpt-oss-120b": 1266
+ },
+ "latency_s": 7.55,
+ "llm_s": 8.82,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_stats.py::test_clamp - assert 0 == 3"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 33,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The clamp implementation is incorrect; it returns min(lo, max(x, hi)) which yields the lower bound instead of clamping to the upper bound, causing test failures.",
+   "suggested_fix": "Replace the line with: return max(lo, min(x, hi))",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/stats.py",
+   "line": 33,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The reordered clamp implementation changes the intended behavior, but no tests cover the new logic. The existing test fails, indicating the change is incorrect.",
+   "suggested_fix": "Add tests that verify clamp correctly limits values to the [lo, hi] range, and revert the implementation to the original `return max(lo, min(x, hi))` or adjust logic to match the intended behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

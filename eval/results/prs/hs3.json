@@ -1,0 +1,45 @@
+{
+ "id": "hs3",
+ "commit": "ae20042e7ef5508dd6a5833ee9de46debfb2842b",
+ "dirty": true,
+ "pr_hash": "1370143d2952ef9f",
+ "date": "2026-11-19",
+ "tokens": 2030,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1329,
+  "openai/gpt-oss-20b": 701
+ },
+ "latency_s": 1.62,
+ "llm_s": 1.74,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/payments.py",
+   "line": 1,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded Stripe secret key in source code exposes credentials.",
+   "suggested_fix": "Load the secret from environment variables or a secure vault, e.g., STRIPE_SECRET = os.getenv('STRIPE_SECRET')",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/payments.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new charge_headers function and STRIPE_SECRET constant.",
+   "suggested_fix": "Add unit tests that verify charge_headers returns the expected Authorization header and that STRIPE_SECRET is correctly used.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "rl1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "915706f095735dda",
+ "date": "2026-11-19",
+ "tokens": 2019,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 699,
+  "openai/gpt-oss-120b": 1320
+ },
+ "latency_s": 1.7,
+ "llm_s": 1.86,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 6,
+   "severity": "medium",
+   "category": "bug",
+   "message": "File is opened without a context manager, leading to a resource leak as the file is never closed.",
+   "suggested_fix": "Use a with statement: with open(path, encoding=\"utf-8\") as f: return [line.rstrip(\"\\n\") for line in f]",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 6,
+   "severity": "medium",
+   "category": "tests",
+   "message": "read_lines opens a file without closing it, potentially leaking file descriptors.",
+   "suggested_fix": "Use a with statement: with open(path, encoding=\"utf-8\") as f: return [line.rstrip(\"\\n\") for line in f]",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

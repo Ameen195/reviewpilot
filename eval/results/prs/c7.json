@@ -1,0 +1,44 @@
+{
+ "id": "c7",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "d7df9914886eede1",
+ "date": "2026-11-19",
+ "tokens": 4650,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1667,
+  "openai/gpt-oss-120b": 2983
+ },
+ "latency_s": 14.71,
+ "llm_s": 21.46,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "tests/test_counter.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The new Counter.decrement method is not fully exercised by tests; edge cases such as decrementing from zero or negative values are not covered.",
+   "suggested_fix": "Add tests that verify decrement behavior when the counter is at zero or when decrementing by a specific amount, ensuring correct handling of underflow or negative results.",
+   "confidence": 0.85,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "The new decrement method has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that verify decrementing the counter, including edge cases such as negative values and concurrent access.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

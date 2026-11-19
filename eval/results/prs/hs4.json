@@ -1,0 +1,45 @@
+{
+ "id": "hs4",
+ "commit": "ae20042e7ef5508dd6a5833ee9de46debfb2842b",
+ "dirty": true,
+ "pr_hash": "1444beb3d7a59320",
+ "date": "2026-11-19",
+ "tokens": 2318,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1508,
+  "openai/gpt-oss-20b": 810
+ },
+ "latency_s": 1.99,
+ "llm_s": 1.83,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 4,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded AWS credentials expose secret keys in source code.",
+   "suggested_fix": "Replace the hardcoded strings with environment variable reads, e.g., AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')",
+   "confidence": 1.0,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the newly added AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY constants.",
+   "suggested_fix": "Add unit tests that verify these constants are defined and have expected values or that configuration loading includes them if required.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

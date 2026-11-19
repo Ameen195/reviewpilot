@@ -1,0 +1,45 @@
+{
+ "id": "rc3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "3c8b35ff76728166",
+ "date": "2026-11-19",
+ "tokens": 2482,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 823,
+  "openai/gpt-oss-120b": 1659
+ },
+ "latency_s": 9.74,
+ "llm_s": 10.69,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/cache.py",
+   "line": 24,
+   "severity": "medium",
+   "category": "bug",
+   "message": "Eviction logic runs outside the lock, leading to a race condition where concurrent set calls can corrupt _data or exceed max_items.",
+   "suggested_fix": "Move the eviction check and removal inside the with self._lock block.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/cache.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "New behavior: lock held for less time in cache.set, but no tests cover this change.",
+   "suggested_fix": "Add tests that verify lock acquisition duration or that concurrent set operations do not block unnecessarily.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

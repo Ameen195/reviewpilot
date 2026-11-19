@@ -1,0 +1,45 @@
+{
+ "id": "rl2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "33728915819004f3",
+ "date": "2026-11-19",
+ "tokens": 2163,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 735,
+  "openai/gpt-oss-120b": 1428
+ },
+ "latency_s": 10.74,
+ "llm_s": 13.56,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 11,
+   "severity": "medium",
+   "category": "bug",
+   "message": "File opened without a context manager may remain unclosed, causing a resource leak.",
+   "suggested_fix": "Use a with statement: with open(path, \"w\", newline=\"\", encoding=\"utf-8\") as f:",
+   "confidence": 0.98,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 11,
+   "severity": "medium",
+   "category": "tests",
+   "message": "write_report no longer closes the file, potentially leaking file descriptors.",
+   "suggested_fix": "Use a with statement to ensure the file is closed after writing.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,57 @@
+{
+ "id": "mn4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "b35f9249cfa02742",
+ "date": "2026-11-19",
+ "tokens": 2110,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1325,
+  "openai/gpt-oss-20b": 785
+ },
+ "latency_s": 5.59,
+ "llm_s": 6.46,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_config.py::test_api_key_missing - AttributeError: 'NoneType..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 14,
+   "severity": "critical",
+   "category": "bug",
+   "message": "Calling .strip() on None when SHOP_API_KEY is not set causes AttributeError",
+   "suggested_fix": "key = os.environ.get(\"SHOP_API_KEY\"); if not key: raise RuntimeError(\"SHOP_API_KEY is not set\"); return key.strip()",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": 14,
+   "severity": "medium",
+   "category": "tests",
+   "message": "api_key() now returns None.strip() when SHOP_API_KEY is unset, causing AttributeError. No test covers this scenario.",
+   "suggested_fix": "Add a check for None and raise RuntimeError as before, or handle None before strip.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/config.py",
+   "line": 14,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests verify that leading/trailing whitespace is removed from the API key.",
+   "suggested_fix": "Add a test that sets SHOP_API_KEY with surrounding spaces and asserts the stripped value.",
+   "confidence": 0.8,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

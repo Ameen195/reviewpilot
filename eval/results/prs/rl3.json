@@ -1,0 +1,45 @@
+{
+ "id": "rl3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "cb0365c205331c21",
+ "date": "2026-11-19",
+ "tokens": 2045,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 682,
+  "openai/gpt-oss-120b": 1363
+ },
+ "latency_s": 9.61,
+ "llm_s": 13.6,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 8,
+   "severity": "medium",
+   "category": "security",
+   "message": "The function loads a JSON file from an arbitrary path without validating or restricting the path, which could allow path traversal or loading of malicious files.",
+   "suggested_fix": "Validate the provided path against an allowed directory or use a safe file\u2011access method before opening the file.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": 8,
+   "severity": "low",
+   "category": "tests",
+   "message": "load_config opens a file without a context manager, potentially leaving the file open if an exception occurs.",
+   "suggested_fix": "Use a with statement: with open(path, encoding=\"utf-8\") as f: data = json.load(f)",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

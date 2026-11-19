@@ -1,0 +1,45 @@
+{
+ "id": "c8",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "87381e3aee28ac00",
+ "date": "2026-11-19",
+ "tokens": 2215,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 719,
+  "openai/gpt-oss-120b": 1496
+ },
+ "latency_s": 12.42,
+ "llm_s": 14.25,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 13,
+   "severity": "medium",
+   "category": "security",
+   "message": "The header values are written directly to the CSV without validation, allowing CSV injection if they contain formula characters like =,+,-,@.",
+   "suggested_fix": "Validate or escape header strings before writing, e.g., prefix with a single quote or reject dangerous characters.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "The new header parameter in write_report is not covered by any tests.",
+   "suggested_fix": "Add tests that call write_report with custom header values and verify the first row of the CSV matches the header.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,34 @@
+{
+ "id": "c3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "5e8b5261c07e2c94",
+ "date": "2026-11-19",
+ "tokens": 2298,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 800,
+  "openai/gpt-oss-120b": 1498
+ },
+ "latency_s": 11.61,
+ "llm_s": 15.67,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 3,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new FREE_SHIPPING_MIN constant or its usage in is_free_shipping.",
+   "suggested_fix": "Add unit tests that verify is_free_shipping returns True for totals >= FREE_SHIPPING_MIN and False otherwise, and that the constant is correctly used.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

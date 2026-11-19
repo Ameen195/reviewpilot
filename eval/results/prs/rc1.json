@@ -1,0 +1,45 @@
+{
+ "id": "rc1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "cc7b579ed2f5bbc4",
+ "date": "2026-11-19",
+ "tokens": 1956,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 654,
+  "openai/gpt-oss-120b": 1302
+ },
+ "latency_s": 1.51,
+ "llm_s": 1.34,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/counter.py",
+   "line": 10,
+   "severity": "medium",
+   "category": "bug",
+   "message": "Removing the lock makes increment() non\u2011thread\u2011safe, leading to race conditions and incorrect counter values when used from multiple threads.",
+   "suggested_fix": "Re\u2011introduce the lock around the update, e.g., with self._lock: self._value += n; return self._value",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new behavior of increment without acquiring a lock, which may affect thread safety.",
+   "suggested_fix": "Add tests that exercise increment concurrently to verify correctness.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

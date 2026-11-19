@@ -1,0 +1,34 @@
+{
+ "id": "mt2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "5f587d71fc8e5d13",
+ "date": "2026-11-19",
+ "tokens": 1825,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1193,
+  "openai/gpt-oss-20b": 632
+ },
+ "latency_s": 6.64,
+ "llm_s": 7.0,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/textutils.py",
+   "line": 16,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function capitalize_words has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests for capitalize_words, including edge cases such as empty string, multiple spaces, and non-alphabetic characters.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,34 @@
+{
+ "id": "mt1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "8cfec24810c3f69f",
+ "date": "2026-11-19",
+ "tokens": 2022,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1331,
+  "openai/gpt-oss-20b": 691
+ },
+ "latency_s": 1.42,
+ "llm_s": 1.25,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/stats.py",
+   "line": 7,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function variance has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests for variance, including edge cases such as empty list, single element, and typical list.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

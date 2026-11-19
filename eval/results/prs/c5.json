@@ -1,0 +1,44 @@
+{
+ "id": "c5",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "11570e7bec3ed4bb",
+ "date": "2026-11-19",
+ "tokens": 3980,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1443,
+  "openai/gpt-oss-120b": 2537
+ },
+ "latency_s": 15.11,
+ "llm_s": 21.44,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "tests/test_config.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The new get_timeout behavior raises ValueError for non-positive timeouts, but only zero is tested. Negative values are not covered by tests.",
+   "suggested_fix": "Add a test case that passes a negative timeout (e.g., -5) and asserts that ValueError is raised.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new ValueError raised when timeout is non-positive in get_timeout.",
+   "suggested_fix": "Add tests that verify ValueError is raised for timeout values <= 0.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

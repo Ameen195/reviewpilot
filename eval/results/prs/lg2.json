@@ -1,0 +1,47 @@
+{
+ "id": "lg2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "4368a0080eb29d0a",
+ "date": "2026-11-19",
+ "tokens": 2217,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 798,
+  "openai/gpt-oss-120b": 1419
+ },
+ "latency_s": 7.73,
+ "llm_s": 9.96,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_total_and_discount - assert 20.0 == 180"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 20,
+   "severity": "critical",
+   "category": "bug",
+   "message": "apply_discount now returns total * percent / 100, which calculates the discount amount instead of the final price after discount, causing incorrect results.",
+   "suggested_fix": "return round(total * (100 - percent) / 100, 2)",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 20,
+   "severity": "medium",
+   "category": "tests",
+   "message": "apply_discount now returns the percentage of total instead of the discounted amount, but no tests cover this new behavior.",
+   "suggested_fix": "Add a test in tests/test_orders.py that verifies apply_discount(200, 10) == 20.0 and that the function raises ValueError for invalid percent values.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

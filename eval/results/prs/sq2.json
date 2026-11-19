@@ -1,0 +1,45 @@
+{
+ "id": "sq2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "43ae70975c2d066b",
+ "date": "2026-11-19",
+ "tokens": 2013,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 686,
+  "openai/gpt-oss-120b": 1327
+ },
+ "latency_s": 10.85,
+ "llm_s": 15.17,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 29,
+   "severity": "high",
+   "category": "security",
+   "message": "SQL query is built by concatenating user_id, enabling SQL injection.",
+   "suggested_fix": "Use parameterized query: conn.execute(\"DELETE FROM users WHERE id = ?\", (user_id,))",
+   "confidence": 1.0,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 29,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the delete_user function after its modification.",
+   "suggested_fix": "Add unit tests that call delete_user with various user_id values, including edge cases, to ensure correct behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

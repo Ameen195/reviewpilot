@@ -1,0 +1,44 @@
+{
+ "id": "c4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "66137ca15898e64f",
+ "date": "2026-11-19",
+ "tokens": 4982,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1726,
+  "openai/gpt-oss-120b": 3256
+ },
+ "latency_s": 25.26,
+ "llm_s": 40.95,
+ "tests": {
+  "passed": 25,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new list_users function.",
+   "suggested_fix": "Add unit tests for list_users to verify correct output and limit handling.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "tests/test_users_db.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the behavior of list_users beyond a single limit case.",
+   "suggested_fix": "Add tests for default limit, ordering, empty result, and error handling of list_users.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

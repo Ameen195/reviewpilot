@@ -1,0 +1,34 @@
+{
+ "id": "mt3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "63c3df6a5f758329",
+ "date": "2026-11-19",
+ "tokens": 2121,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1398,
+  "openai/gpt-oss-20b": 723
+ },
+ "latency_s": 7.69,
+ "llm_s": 7.94,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 29,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function coupon_counts has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that verify counting logic for orders with and without coupons, including edge cases such as duplicate coupons and empty order lists.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

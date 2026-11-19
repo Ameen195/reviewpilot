@@ -1,0 +1,47 @@
+{
+ "id": "ob1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "2a18dde49f79274a",
+ "date": "2026-11-19",
+ "tokens": 2208,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1416,
+  "openai/gpt-oss-20b": 792
+ },
+ "latency_s": 2.3,
+ "llm_s": 3.25,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_stats.py::test_moving_average - assert [1.5, 2.5] == [1.5, ..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 22,
+   "severity": "high",
+   "category": "bug",
+   "message": "The loop range is off by one, causing the last window to be omitted and producing an incomplete result.",
+   "suggested_fix": "Change the loop to `for i in range(len(xs) - window + 1):`",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/stats.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "The updated moving_average implementation changes the output length by one, but no tests cover this new behavior.",
+   "suggested_fix": "Add tests verifying the length and values of the result for various input sizes, including edge cases where len(xs) == window.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

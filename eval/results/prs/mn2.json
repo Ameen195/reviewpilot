@@ -1,0 +1,67 @@
+{
+ "id": "mn2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "25b4e51f0261064c",
+ "date": "2026-11-19",
+ "tokens": 5027,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1847,
+  "openai/gpt-oss-120b": 3180
+ },
+ "latency_s": 15.6,
+ "llm_s": 26.57,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_orders.py::test_coupon_code - AttributeError: 'NoneType' ob..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 30,
+   "severity": "high",
+   "category": "bug",
+   "message": "AttributeError when order.coupon is None or missing; calling .upper() on None fails.",
+   "suggested_fix": "if not getattr(order, 'coupon', None): return None else: return order.coupon.upper()",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "tests/test_orders.py",
+   "line": null,
+   "severity": "high",
+   "category": "bug",
+   "message": "coupon_code crashes when the Order instance has no 'coupon' attribute, causing an AttributeError instead of returning None as the test expects.",
+   "suggested_fix": "Modify coupon_code to safely access the coupon attribute, e.g., use getattr(order, 'coupon', None) and return the upper\u2011cased value only if it exists.",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  },
+  {
+   "file": "shop/orders.py",
+   "line": 30,
+   "severity": "medium",
+   "category": "tests",
+   "message": "coupon_code assumes order.coupon is a string; if None, .upper() raises AttributeError.",
+   "suggested_fix": "Add a guard: return order.coupon.upper() if order.coupon else \"\" or raise a clear error.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/orders.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the case where order.coupon is None or missing.",
+   "suggested_fix": "Add a unit test that passes an order with coupon=None and asserts the function handles it gracefully.",
+   "confidence": 0.8,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

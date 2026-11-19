@@ -1,0 +1,45 @@
+{
+ "id": "hs5",
+ "commit": "ae20042e7ef5508dd6a5833ee9de46debfb2842b",
+ "dirty": true,
+ "pr_hash": "0f2e2af1e4ac80ce",
+ "date": "2026-11-19",
+ "tokens": 1910,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 644,
+  "openai/gpt-oss-120b": 1266
+ },
+ "latency_s": 1.84,
+ "llm_s": 2.14,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 18,
+   "severity": "medium",
+   "category": "security",
+   "message": "Hardcoded bearer token is exposed in source code, risking credential leakage.",
+   "suggested_fix": "Load the token from a secure source such as environment variables or a secret manager, e.g., return {\"Authorization\": f\"Bearer {os.getenv('DASHBOARD_TOKEN')}\"}",
+   "confidence": 0.98,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "upload_headers function is added but has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests to verify that upload_headers returns the expected Authorization header dictionary.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

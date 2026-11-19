@@ -1,0 +1,45 @@
+{
+ "id": "sq3",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "843c8833a8fad669",
+ "date": "2026-11-19",
+ "tokens": 2088,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 669,
+  "openai/gpt-oss-120b": 1419
+ },
+ "latency_s": 11.11,
+ "llm_s": 14.43,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "high",
+   "category": "security",
+   "message": "SQL query is built by concatenating user input, leading to SQL injection vulnerability.",
+   "suggested_fix": "Use parameterized queries, e.g., sql = \"SELECT id, name FROM users WHERE name LIKE ?\" and pass ('%'+term+'%',) to execute.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function search_users has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests for search_users, including cases for normal input, empty string, special characters, and SQL injection prevention.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

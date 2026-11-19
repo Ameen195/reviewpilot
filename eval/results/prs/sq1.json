@@ -1,0 +1,45 @@
+{
+ "id": "sq1",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "42ec380d9abe551f",
+ "date": "2026-11-19",
+ "tokens": 0,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 0,
+  "openai/gpt-oss-20b": 0
+ },
+ "latency_s": 1.02,
+ "llm_s": 0.02,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 24,
+   "severity": "high",
+   "category": "security",
+   "message": "The query uses string interpolation with user-supplied email, leading to SQL injection risk.",
+   "suggested_fix": "Use parameterized query: rows = conn.execute(\"SELECT id, name FROM users WHERE email = ?\", (email,)).fetchall()",
+   "confidence": 1.0,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 24,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The updated find_by_email function uses string interpolation for SQL queries, which introduces a potential SQL injection vulnerability. No tests currently cover this new behavior.",
+   "suggested_fix": "Replace the f-string with a parameterized query: rows = conn.execute(\"SELECT id, name FROM users WHERE email = ?\", (email,)).fetchall()",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

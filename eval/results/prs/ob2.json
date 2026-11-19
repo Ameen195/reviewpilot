@@ -1,0 +1,36 @@
+{
+ "id": "ob2",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "26fd986f95475377",
+ "date": "2026-11-19",
+ "tokens": 2023,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 687,
+  "openai/gpt-oss-120b": 1336
+ },
+ "latency_s": 4.04,
+ "llm_s": 6.29,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_paginate - assert [3, 4] == [1, 2]"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 25,
+   "severity": "high",
+   "category": "bug",
+   "message": "Off\u2011by\u2011one error: start index should be (page\u20111)*per_page, not page*per_page, causing wrong slice results.",
+   "suggested_fix": "start = (page - 1) * per_page",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

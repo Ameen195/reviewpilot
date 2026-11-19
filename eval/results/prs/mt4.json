@@ -1,0 +1,45 @@
+{
+ "id": "mt4",
+ "commit": "1fb4d5845c8487496fe0cc5123d25d088573b7a1",
+ "dirty": true,
+ "pr_hash": "d1c158274a909b61",
+ "date": "2026-11-19",
+ "tokens": 1936,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 637,
+  "openai/gpt-oss-120b": 1299
+ },
+ "latency_s": 6.85,
+ "llm_s": 6.88,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "medium",
+   "category": "bug",
+   "message": "ensure_dir does not validate the input; passing an empty string or None will cause os.makedirs to raise an exception.",
+   "suggested_fix": "Add a check that path is a non\u2011empty string before calling os.makedirs, e.g., if not path: raise ValueError('path must be non\u2011empty')",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function ensure_dir has no tests covering its behavior.",
+   "suggested_fix": "Add tests that verify directory creation and idempotency, e.g., calling ensure_dir on a new path and an existing path and asserting the directory exists.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}
