@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "127.0.0.1:6379:6379"  # local machine only
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]  # queue survives a Redis restart
+
+volumes:
+  redis-data:

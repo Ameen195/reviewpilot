@@ -1,11 +1,15 @@
 import logging
 import operator
+import sqlite3
 import sys
 from collections.abc import Callable
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Annotated, Literal, TypedDict
 
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
+from langgraph.types import interrupt
 from pydantic import BaseModel, Field, ValidationError
 
 from reviewpilot.agents.llm import chat_json
@@ -34,10 +38,12 @@ class Finding(BaseModel):
     message: str
     suggested_fix: str = ""
     confidence: float = Field(ge=0, le=1)
+    bumped_by_tests: bool = False  # severity raised one level by a failing test near the change
 
 
 class State(TypedDict, total=False):
-    ctx: PRContext
+    # Checkpointed, so small values only: PRContext does not round-trip (tuples become lists);
+    # it is passed to the nodes by closure and rebuilt from GitHub for the same head sha.
     tests: SandboxResult | None  # None when the sandbox is not used
     raw: Annotated[list[Finding], operator.add]
     tokens: Annotated[int, operator.add]
@@ -45,11 +51,13 @@ class State(TypedDict, total=False):
     merged: list[Finding]
     inline: list[Finding]  # tied to a commentable changed line
     summary: list[Finding]  # PR-level: no line, or a line that cannot take a comment
+    rejected: int  # critical findings a human rejected
+    posted: bool
 
 
-def _reviewer(name: str, model: str, llm: Callable):
+def _reviewer(name: str, model: str, llm: Callable, ctx: PRContext):
     def run(state: State) -> State:
-        ctx, found, tokens, errors = state["ctx"], [], 0, []
+        found, tokens, errors = [], 0, []
         paths = [f.path for f in ctx.files]
         for f in ctx.files:
             others = [p for p in paths if p != f.path]
@@ -100,11 +108,11 @@ def failing_test_touches(path: str, failed: list[str]) -> bool:
 
 def _bump(f: Finding) -> Finding:
     i = SEVERITY_ORDER.index(f.severity)
-    return f.model_copy(update={"severity": SEVERITY_ORDER[max(i - 1, 0)]})
+    return f.model_copy(update={"severity": SEVERITY_ORDER[max(i - 1, 0)], "bumped_by_tests": True})
 
 
-def filter_findings(state: State) -> State:
-    diffs = {f.path: f.diff for f in state["ctx"].files}
+def filter_findings(state: State, ctx: PRContext) -> State:
+    diffs = {f.path: f.diff for f in ctx.files}
     tests = state.get("tests")
     failed = tests.failed if tests and not tests.error else []
     inline, summary = [], []
@@ -119,24 +127,59 @@ def filter_findings(state: State) -> State:
     return {"inline": sorted(inline, key=key), "summary": sorted(summary, key=key)}
 
 
-def build_graph(llm: Callable = chat_json, run_tests: Callable | None = None):
+def approve(state: State) -> State:
+    """Critical findings wait for a human. The resume value is "approve" or "reject"."""
+    critical = [f for f in state["inline"] + state["summary"] if f.severity == "critical"]
+    if not critical:
+        return {}
+    decision = interrupt({"critical": [f.model_dump() for f in critical]})
+    if decision == "approve":
+        return {}
+    keep = lambda fs: [f for f in fs if f.severity != "critical"]
+    return {"inline": keep(state["inline"]), "summary": keep(state["summary"]),
+            "rejected": len(critical)}  # fmt: skip
+
+
+def checkpointer(path: str) -> SqliteSaver:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    serde = JsonPlusSerializer(allowed_msgpack_modules=[
+        ("reviewpilot.agents.graph", "Finding"), ("reviewpilot.sandbox.runner", "SandboxResult"),
+    ])  # fmt: skip
+    return SqliteSaver(sqlite3.connect(path, check_same_thread=False), serde=serde)
+
+
+def build_graph(
+    ctx: PRContext,
+    llm: Callable = chat_json,
+    run_tests: Callable | None = None,
+    post: Callable[[State], bool] | None = None,
+    saver: SqliteSaver | None = None,
+):
+    """With `post`, critical findings pause for approval (needs `saver`), then post(state) runs."""
     g = StateGraph(State)
-    g.add_node("sandbox", lambda s: {"tests": run_tests(s["ctx"]) if run_tests else None})
+    g.add_node("sandbox", lambda s: {"tests": run_tests(ctx) if run_tests else None})
     g.add_edge(START, "sandbox")
     for name, model in REVIEWERS.items():
-        g.add_node(name, _reviewer(name, model, llm))
+        g.add_node(name, _reviewer(name, model, llm, ctx))
         g.add_edge("sandbox", name)
         g.add_edge(name, "merge")
     g.add_node("merge", merge)
-    g.add_node("filter", filter_findings)
+    g.add_node("filter", lambda s: filter_findings(s, ctx))
     g.add_edge("merge", "filter")
-    g.add_edge("filter", END)
-    return g.compile()
+    if post:
+        g.add_node("approve", approve)
+        g.add_node("post", lambda s: {"posted": post(s)})
+        g.add_edge("filter", "approve")
+        g.add_edge("approve", "post")
+        g.add_edge("post", END)
+    else:
+        g.add_edge("filter", END)
+    return g.compile(checkpointer=saver)
 
 
 def review(ctx: PRContext, llm: Callable = chat_json, run_tests: Callable | None = None) -> State:
-    """run_tests(ctx) -> SandboxResult; omit it to review without running tests."""
-    return build_graph(llm, run_tests).invoke({"ctx": ctx})
+    """Print-only review, nothing posted. run_tests(ctx) -> SandboxResult; omit to skip tests."""
+    return build_graph(ctx, llm, run_tests).invoke({})
 
 
 def main(argv: list[str]) -> None:
@@ -164,7 +207,8 @@ def main(argv: list[str]) -> None:
         print(f"\n{title} findings ({len(items)}):")
         for f in items:
             where = f"{f.file}:{f.line}" if f.line else f.file
-            print(f"  [{f.severity}] {f.category} {where} (conf {f.confidence:.2f})")
+            bumped = " (raised by failing test)" if f.bumped_by_tests else ""
+            print(f"  [{f.severity}]{bumped} {f.category} {where} (conf {f.confidence:.2f})")
             print(f"      {f.message}")
             if f.suggested_fix:
                 print(f"      fix: {f.suggested_fix}")

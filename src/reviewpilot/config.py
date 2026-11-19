@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     github_private_key_path: str = (
         ""  # path to the .pem; the file is read only inside github/auth.py
     )
+    redis_url: str = "redis://127.0.0.1:6379/0"
+    checkpoint_db: str = "data/checkpoints.sqlite"
 
 
 def get_settings() -> Settings:

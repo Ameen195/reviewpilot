@@ -70,10 +70,10 @@ def test_failing_test_near_change_raises_severity():
     f = Finding(file="app/calc.py", line=6, severity="medium", category="bug", message="m",
                 confidence=0.9)  # fmt: skip
     t = SandboxResult(passed=1, failed=["tests/test_calc.py::test_add - AssertionError"])
-    out = filter_findings({"ctx": ctx(), "merged": [f], "tests": t})
-    assert out["inline"][0].severity == "high"
-    out = filter_findings({"ctx": ctx(), "merged": [f], "tests": SandboxResult(passed=3)})
-    assert out["inline"][0].severity == "medium"
+    out = filter_findings({"merged": [f], "tests": t}, ctx())
+    assert out["inline"][0].severity == "high" and out["inline"][0].bumped_by_tests
+    out = filter_findings({"merged": [f], "tests": SandboxResult(passed=3)}, ctx())
+    assert out["inline"][0].severity == "medium" and not out["inline"][0].bumped_by_tests
 
 
 def test_test_output_stays_inside_untrusted_tag():

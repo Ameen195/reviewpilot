@@ -2,10 +2,12 @@ import hashlib
 import hmac
 import json
 
+import fakeredis
 import pytest
 from fastapi.testclient import TestClient
 
 from reviewpilot.api.app import app
+from reviewpilot.queue import jobs
 
 SECRET = "test-secret"
 
@@ -13,6 +15,13 @@ SECRET = "test-secret"
 @pytest.fixture(autouse=True)
 def _secret(monkeypatch):
     monkeypatch.setenv("GITHUB_WEBHOOK_SECRET", SECRET)
+
+
+@pytest.fixture(autouse=True)
+def r(monkeypatch):
+    fake = fakeredis.FakeRedis(decode_responses=True)
+    monkeypatch.setattr(jobs, "connect", lambda: fake)
+    return fake
 
 
 def sign(body: bytes, secret: str = SECRET) -> str:
@@ -35,11 +44,18 @@ PAYLOAD = json.dumps(
 ).encode()
 
 
-def test_valid_pr_event_is_logged(caplog):
+def test_valid_pr_event_is_logged_and_queued_once(caplog, r):
     with caplog.at_level("INFO", logger="reviewpilot"):
-        r = post(PAYLOAD, sign(PAYLOAD))
-    assert r.status_code == 200
+        res = post(PAYLOAD, sign(PAYLOAD))
+    assert res.status_code == 202 and res.json()["status"] == "queued"
     assert "repo=me/test pr=#1 head=abc123" in caplog.text
+    assert post(PAYLOAD, sign(PAYLOAD)).json()["status"] == "duplicate"  # GitHub redelivery
+    assert r.llen(jobs.QUEUE) == 1
+
+
+def test_non_review_action_not_queued(r):
+    body = PAYLOAD.replace(b'"opened"', b'"closed"')
+    assert post(body, sign(body)).json()["status"] == "ignored" and r.llen(jobs.QUEUE) == 0
 
 
 def test_wrong_signature_rejected():
@@ -58,4 +74,4 @@ def test_empty_secret_rejects_everything(monkeypatch):
 def test_other_event_ignored():
     body = b"{}"
     r = post(body, sign(body), event="ping")
-    assert r.status_code == 200 and r.json()["status"] == "ignored"
+    assert r.status_code == 202 and r.json()["status"] == "ignored"

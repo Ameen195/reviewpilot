@@ -106,7 +106,7 @@ def test_merge_specialist_wins_over_higher_confidence_but_not_below_threshold():
 
 def test_tests_findings_go_to_summary_even_on_a_changed_line():
     t, b = (F(6, c).model_copy(update={"file": "app/calc.py"}) for c in ("tests", "bug"))
-    out = filter_findings({"ctx": ctx(), "merged": merge({"raw": [t, b]})["merged"]})
+    out = filter_findings({"merged": merge({"raw": [t, b]})["merged"]}, ctx())
     assert [f.category for f in out["inline"]] == ["bug"]  # same line, both survive
     assert [f.category for f in out["summary"]] == ["tests"]
 
