@@ -2,6 +2,7 @@ import subprocess
 import sys
 
 import plant
+import pytest
 from score import aggregate, score_pr
 
 from reviewpilot.context.diff import parse_patch
@@ -20,10 +21,11 @@ TRUTH = {"id": "x", "category": "off_by_one", "expected_reviewer": "bug", "file"
          "line": 10}  # fmt: skip
 
 
-def test_dataset_sane():
-    rows = plant.dataset()
-    assert len({r["id"] for r in rows}) == len(rows) == 50
-    assert sum(r["category"] == "clean" for r in rows) == 10
+@pytest.mark.parametrize(("name", "n", "clean"), [("original", 50, 10), ("heldout", 10, 2)])
+def test_dataset_sane(name, n, clean):
+    rows = plant.dataset(name)
+    assert len({r["id"] for r in rows}) == len(rows) == n
+    assert sum(r["category"] == "clean" for r in rows) == clean
     for r in rows:
         if r["category"] == "clean":
             assert r["line"] is None

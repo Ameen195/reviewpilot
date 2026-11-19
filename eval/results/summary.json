@@ -1,5 +1,5 @@
 {
- "commit": "ae20042e7ef5508dd6a5833ee9de46debfb2842b",
+ "commit": "c4db2c91dfa65531d474c6a93615f10f07042855",
  "result_commits": [
   "1fb4d58",
   "ae20042"
@@ -93,13 +93,14 @@
    "code_fp_per_pr": 0.2
   }
  },
+ "prs_with_real_tokens": 48,
  "tokens_per_pr": {
-  "mean": 2426,
+  "mean": 2527,
   "p95": 4982,
   "total": 121312
  },
  "latency_s_per_pr": {
-  "mean": 7.7,
+  "mean": 8.0,
   "p95": 16.28
  },
  "prs_with_errors": 0,
@@ -193,13 +194,14 @@
     "code_fp_per_pr": 0.2
    }
   },
+  "prs_with_real_tokens": 48,
   "tokens_per_pr": {
-   "mean": 2426,
+   "mean": 2527,
    "p95": 4982,
    "total": 121312
   },
   "latency_s_per_pr": {
-   "mean": 7.7,
+   "mean": 8.0,
    "p95": 16.28
   },
   "prs_with_errors": 0

@@ -4,7 +4,7 @@
 Each PR is a set of exact text edits on eval/sample_repo. The planted bug's line is found by a
 marker substring in the new file, so line numbers never drift by hand.
 
-    uv run python eval/plant.py          # writes eval/dataset.json
+    uv run python eval/plant.py          # writes eval/dataset.json and eval/dataset_heldout.json
     uv run python eval/plant.py --show 10  # prints a mixed sample for checking
 """
 
@@ -782,6 +782,93 @@ PRS = [
     ),
 ]
 
+# Held-out set: written before the Phase 6 fixes, never looked at while fixing. Its base code lives
+# in shop/inventory.py and shop/schedule.py (no base tests), so the original 50 are unchanged.
+_SCHEDULE_TEST = """from datetime import date
+
+from shop.schedule import overlaps
+
+
+def test_touching_ranges_do_not_overlap():
+    d1, d2, d3 = date(2026, 1, 1), date(2026, 1, 2), date(2026, 1, 3)
+    assert not overlaps(d1, d2, d2, d3)
+"""
+_SCHEDULE_TEST_CLEAN = """from datetime import date
+
+import pytest
+
+from shop.schedule import business_days
+
+
+def test_business_days_skips_weekend():
+    friday = date(2026, 11, 20)
+    assert business_days(friday, 2) == [date(2026, 11, 23), date(2026, 11, 24)]
+
+
+def test_business_days_negative():
+    with pytest.raises(ValueError):
+        business_days(date(2026, 11, 20), -1)
+"""
+HELDOUT = [
+    P("h01", "off_by_one", "last_n_days: simplify range",
+      "range(n, ...) returns n+1 dates instead of n", "shop/schedule.py",
+      [("range(n - 1, -1, -1)", "range(n, -1, -1)")], "range(n, -1, -1)"),
+    P("h02", "logic", "Tidy overlaps comparison",
+      "<= makes touching half-open ranges overlap", "shop/schedule.py",
+      [("return a_start < b_end and b_start < a_end", "return a_start <= b_end and b_start <= a_end")],
+      "return a_start <= b_end and b_start <= a_end",
+      also={"tests/test_schedule.py": [(None, _SCHEDULE_TEST)]}),
+    P("h03", "missing_null", "Add email_of helper",
+      "get_user returns None for an unknown id, ['email'] then raises TypeError",
+      "shop/users_db.py",
+      [("def count_users(", 'def email_of(conn, user_id):\n    return get_user(conn, user_id)["email"]'
+        "\n\n\ndef count_users(")], 'get_user(conn, user_id)["email"]'),
+    P("h04", "sql_injection", "Add rename_user",
+      "name is f-string interpolated into the UPDATE (id is parameterised, name is not)",
+      "shop/users_db.py",
+      [("def count_users(", "def rename_user(conn, user_id, name):\n"
+        "    conn.execute(f\"UPDATE users SET name = '{name}' WHERE id = ?\", (user_id,))\n"
+        "    conn.commit()\n\n\ndef count_users(")], "SET name = '{name}'"),
+    P("h05", "hardcoded_secret", "Sync with the team calendar",
+      "calendar API token hardcoded in source", "shop/schedule.py",
+      [("from datetime import timedelta\n",
+        'from datetime import timedelta\n\nCALENDAR_TOKEN = "caltoken-0000-1111-2222-3333"\n'),
+       ("def overlaps(", 'def calendar_headers():\n    return {"X-Calendar-Token": CALENDAR_TOKEN}'
+        "\n\n\ndef overlaps(")], 'CALENDAR_TOKEN = "'),
+    P("h06", "race_condition", "reserve: shorter critical section",
+      "stock check runs outside the lock, two threads can both reserve the last units",
+      "shop/inventory.py",
+      [("        with self._lock:\n            have = self._stock.get(sku, 0)\n"
+        "            if have < qty:\n                return False\n"
+        "            self._stock[sku] = have - qty\n            return True",
+        "        if self.level(sku) < qty:\n            return False\n        with self._lock:\n"
+        "            self._stock[sku] -= qty\n        return True")],
+      "        if self.level(sku) < qty:"),
+    P("h07", "resource_leak", "Add export_emails",
+      "output file never closed, rows may not be flushed", "shop/users_db.py",
+      [("def count_users(", 'def export_emails(conn, path):\n    out = open(path, "w", encoding="utf-8")\n'
+        '    for (email,) in conn.execute("SELECT email FROM users"):\n'
+        '        out.write(email + "\\n")\n\n\ndef count_users(')], 'out = open(path, "w"'),
+    P("h08", "missing_test", "Inventory.remove_sku", "new remove_sku() has no tests",
+      "shop/inventory.py",
+      [("    def level(self, sku):", "    def remove_sku(self, sku):\n"
+        '        """Forget a SKU entirely; returns its last level (0 if unknown)."""\n'
+        "        with self._lock:\n            return self._stock.pop(sku, 0)\n\n"
+        "    def level(self, sku):")], "    def remove_sku("),
+    P("h09", "clean", "Reject negative day counts", "", "shop/schedule.py",
+      [("    out = []\n    d = start\n",
+        '    if days < 0:\n        raise ValueError("days must not be negative")\n'
+        "    out = []\n    d = start\n")],
+      also={"tests/test_schedule.py": [(None, _SCHEDULE_TEST_CLEAN)]}),
+    P("h10", "clean", "Round restock to pack size", "", "shop/inventory.py",
+      [('def restock_amount(level, target):\n'
+        '    """How many units to order to reach target; never negative."""\n'
+        "    return max(target - level, 0)",
+        "def restock_amount(level, target, pack=1):\n"
+        '    """How many units to order to reach target, rounded up to whole packs; never negative."""'
+        "\n    need = max(target - level, 0)\n    return -(-need // pack) * pack")]),
+]  # fmt: skip
+
 # Edits that are easier to write as whole new text (marked with (None, None) above).
 _COUNTER_TAIL = """
 
@@ -871,12 +958,13 @@ def interleave(prs: list[dict]) -> list[dict]:
     return sorted(prs, key=key)
 
 
-ORDER = interleave(PRS)
+SETS = {"original": interleave(PRS), "heldout": interleave(HELDOUT)}
+ORDER = SETS["original"]
 
 
-def dataset() -> list[dict]:
+def dataset(name: str = "original") -> list[dict]:
     rows = []
-    for pr in ORDER:
+    for pr in SETS[name]:
         _head, files, contents = build(pr)
         rows.append({
             "id": pr["id"], "category": pr["category"],
@@ -908,9 +996,11 @@ def show(rows: list[dict], n: int) -> None:
 
 
 if __name__ == "__main__":
-    rows = dataset()
-    DATASET.write_text(json.dumps(rows, indent=1), encoding="utf-8")
-    counts = {c: sum(r["category"] == c for r in rows) for c in EXPECTED_REVIEWER}
-    print(f"wrote {DATASET} ({len(rows)} PRs): {counts}")
+    for name in SETS:
+        rows = dataset(name)
+        path = DATASET if name == "original" else DATASET.with_name(f"dataset_{name}.json")
+        path.write_text(json.dumps(rows, indent=1), encoding="utf-8")
+        counts = {c: sum(r["category"] == c for r in rows) for c in EXPECTED_REVIEWER}
+        print(f"wrote {path} ({len(rows)} PRs): {counts}")
     if "--show" in sys.argv:
         show(rows, int(sys.argv[sys.argv.index("--show") + 1]))

@@ -3,7 +3,7 @@
 Source: `eval/results/summary.json` / `summary.md` and `eval/results/prs/*.json`; 50/50 PRs
 (40 planted bugs in 8 categories + 10 clean), run 2026-11-19 on Groq free tier (gpt-oss-120b for
 bug/security, gpt-oss-20b for tests). Ground truth: `eval/plant.py`. Definitions: top of
-`eval/score.py`. Human verdicts for ambiguous matches: `eval/manual_review.json`.
+`eval/score.py`. Human verdicts for ambiguous matches: `eval/results/manual_review.json`.
 This is the baseline before any fixes; the issues below are measured, not fixed.
 
 ## Headline numbers (corrected by manual review)
@@ -17,8 +17,8 @@ This is the baseline before any fixes; the issues below are measured, not fixed.
 | Missing-tests notes per PR (counted separately) | bug PRs 0.9, clean PRs 1.1 | same |
 | Duplicates | **1** in 1 PR | 2 |
 | Test-file echoes | 4 in 4 PRs (all severity-bumped) | same |
-| Tokens per PR | mean 2426, p95 4982, total 121312 | |
-| Latency per PR (incl. Docker tests) | mean 7.7s, p95 16.28s | |
+| Tokens per PR (48 PRs; mn1, sq1 were fully cached and are excluded) | mean 2527, p95 4982, total 121312 | |
+| Latency per PR (incl. Docker tests, same 48 PRs) | mean 8.0s, p95 16.28s | |
 | PRs with reviewer errors | 0 | |
 
 | Category | Detected | Code FP/PR |

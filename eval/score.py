@@ -1,8 +1,8 @@
 """Score eval results (offline, no LLM calls).
 
-    uv run python eval/score.py [--any-commit]
+    uv run python eval/score.py [--any-commit] [--set heldout] [--results eval/results/after]
 
-Writes eval/results/summary.json and summary.md. Definitions:
+Writes <results>/summary.json and summary.md (summary_<set>.* for other sets). Definitions:
 - hit: a code finding (bug/security reviewer) in the planted file within +/-2 lines of the planted
   line. For a missing_test PR, a hit is a tests-reviewer finding on the planted file.
 - category accuracy: of the detected bugs, how many had a hit from the expected reviewer
@@ -14,24 +14,25 @@ Writes eval/results/summary.json and summary.md. Definitions:
   reported again on the test file itself).
 - misplaced summary: a code hit that landed in the summary instead of an inline comment.
 
-Human verdicts in eval/manual_review.json correct ambiguous line matches; both raw and corrected
+Human verdicts in <results>/manual_review.json (if present) correct ambiguous line matches; both raw and corrected
 numbers are reported, corrected is the headline:
 - "unrelated": hits that describe a different issue; they stop counting as a hit and count as a
   code false positive instead.
 - "not_duplicate": hits that are a separate real bug (e.g. a second planted secret); they stay
   hits but are not counted as duplicates.
+Token and latency stats skip PRs answered fully from the LLM cache (0 tokens).
 """
 
+import argparse
 import json
 import statistics
 import sys
 from pathlib import Path, PurePosixPath
 
 import plant
-from run import PRS_DIR, RESULTS, git_commit, load_result, pr_hash
+from run import RESULTS, git_commit, load_result, pr_hash
 
 LINE_TOLERANCE = 2
-MANUAL = Path(__file__).parent / "manual_review.json"
 
 
 def is_test_file(path: str) -> bool:
@@ -103,8 +104,9 @@ def aggregate(rows: list[dict], total: int) -> dict:
                    "category_ok": sum(r["category_ok"] for r in d),
                    "category_accuracy": rate(sum(r["category_ok"] for r in d), len(d)),
                    "code_fp_per_pr": per_pr(rs, "code_fp")}  # fmt: skip
-    tok = [r["tokens"] for r in rows]
-    lat = [r["latency_s"] for r in rows]
+    real = [r for r in rows if r["tokens"] > 0]  # fully cached PRs would skew cost and speed
+    tok = [r["tokens"] for r in real]
+    lat = [r["latency_s"] for r in real]
     return {
         "prs_scored": len(rows), "prs_total": total, "bug_prs": len(bug), "clean_prs": len(clean),
         "detection_rate": rate(len(det), len(bug)),
@@ -122,6 +124,7 @@ def aggregate(rows: list[dict], total: int) -> dict:
             "misplaced_summary_hits": sum(r["misplaced_summary"] for r in rows),
         },
         "by_category": cats,
+        "prs_with_real_tokens": len(real),
         "tokens_per_pr": {"mean": round(statistics.mean(tok)) if tok else 0, "p95": p95(tok),
                           "total": sum(tok)},
         "latency_s_per_pr": {"mean": round(statistics.mean(lat), 1) if lat else 0.0,
@@ -130,10 +133,10 @@ def aggregate(rows: list[dict], total: int) -> dict:
     }  # fmt: skip
 
 
-def to_markdown(s: dict, commit: str) -> str:
+def to_markdown(s: dict, commit: str, name: str = "original") -> str:
     k = s["known_issues"]
     lines = [
-        f"# Eval summary, corrected (commit {commit[:7]}, {s['prs_scored']}/{s['prs_total']} PRs scored)", "",
+        f"# Eval summary, {name} set, corrected (commit {commit[:7]}, {s['prs_scored']}/{s['prs_total']} PRs scored)", "",
         f"- Detection rate: {s['detection_rate']} ({s['bug_prs']} bug PRs, +/-{LINE_TOLERANCE} lines)",
         f"- Category accuracy (detected bugs, right reviewer): {s['category_accuracy']}",
         (f"- Code false positives per PR: bug PRs {s['code_fp_per_pr']['bug_prs']}, "
@@ -145,7 +148,7 @@ def to_markdown(s: dict, commit: str) -> str:
         f"{k['test_file_echoes']} in {k['prs_with_echoes']} PRs ({k['test_file_echoes_bumped']} bumped)"),
         (f"- Code findings in summary: {k['summary_code_findings']} "
         f"(of which real bugs that should be inline: {k['misplaced_summary_hits']})"),
-        (f"- Tokens per PR: mean {s['tokens_per_pr']['mean']}, p95 {s['tokens_per_pr']['p95']}, "
+        (f"- Tokens per PR ({s['prs_with_real_tokens']} PRs not fully cached): mean {s['tokens_per_pr']['mean']}, p95 {s['tokens_per_pr']['p95']}, "
         f"total {s['tokens_per_pr']['total']}"),
         f"- Latency per PR: mean {s['latency_s_per_pr']['mean']}s, p95 {s['latency_s_per_pr']['p95']}s",
         f"- PRs with reviewer errors: {s['prs_with_errors']}", "",
@@ -196,31 +199,40 @@ def raw_vs_corrected(raw: dict, s: dict, manual: dict) -> str:
 
 
 def main() -> None:
-    any_commit = "--any-commit" in sys.argv
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--any-commit", action="store_true", help="accept results from other commits")
+    ap.add_argument("--set", choices=list(plant.SETS), default="original")
+    ap.add_argument("--results", default=str(RESULTS), help="results dir (with prs/ inside)")
+    args = ap.parse_args()
+    res_dir, any_commit = Path(args.results), args.any_commit
     commit, _ = git_commit()
-    manual = json.loads(MANUAL.read_text(encoding="utf-8"))
+    manual_path = res_dir / "manual_review.json"
+    manual = json.loads(manual_path.read_text(encoding="utf-8")) if manual_path.exists() else {}
     manual = {k: v for k, v in manual.items() if not k.startswith("_")}
     truths, results = [], {}
-    for truth in plant.dataset():
-        r = load_result(truth["id"], commit, pr_hash(truth["files"]), any_commit)
+    for truth in plant.dataset(args.set):
+        r = load_result(truth["id"], commit, pr_hash(truth["files"]), any_commit, res_dir)
         if r:
             truths.append(truth)
             results[truth["id"]] = r
+    manual = {k: v for k, v in manual.items() if k in {t["id"] for t in plant.dataset(args.set)}}
     if stale := stale_verdicts(manual, results):
         sys.exit(
             "manual_review.json does not match the results, update it:\n  " + "\n  ".join(stale)
         )
     raw_rows = [score_pr(t, results[t["id"]]) for t in truths]
     rows = [score_pr(t, results[t["id"]], manual.get(t["id"])) for t in truths]
-    raw, s = aggregate(raw_rows, len(plant.ORDER)), aggregate(rows, len(plant.ORDER))
+    total = len(plant.SETS[args.set])
+    raw, s = aggregate(raw_rows, total), aggregate(rows, total)
     result_commits = sorted({r["commit"][:7] for r in results.values()})
     out = {"commit": commit, "result_commits": result_commits, **s, "raw": raw, "per_pr": rows}
-    (RESULTS / "summary.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
-    md = to_markdown(s, commit) + raw_vs_corrected(raw, s, manual)
+    stem = "summary" if args.set == "original" else f"summary_{args.set}"
+    (res_dir / f"{stem}.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    md = to_markdown(s, commit, args.set)
+    md += raw_vs_corrected(raw, s, manual) if manual else "\nNo manual review for these results.\n"
     md += f"\nResult files were produced at commit(s): {', '.join(result_commits)}\n"
-    (RESULTS / "summary.md").write_text(md, encoding="utf-8")
+    (res_dir / f"{stem}.md").write_text(md, encoding="utf-8")
     print(md)
-    print(f"(result files in {PRS_DIR})")
 
 
 if __name__ == "__main__":

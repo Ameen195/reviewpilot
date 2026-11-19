@@ -2,10 +2,11 @@
 
     uv run python eval/run.py --limit 3     # trial
     uv run python eval/run.py               # everything not done yet
+    uv run python eval/run.py --set heldout --out eval/results/after --cache data/cache_fresh
 
-One result file per PR in eval/results/prs/. A PR with a result for the current git commit (and
+One result file per PR in <out>/prs/ (default eval/results/prs/). A PR with a result for the current git commit (and
 unchanged PR content) is skipped; results from another commit are ignored unless --any-commit.
-LLM replies are cached in data/cache, so re-running a PR whose prompts did not change costs 0.
+LLM replies are cached in data/cache (or --cache), so re-running a PR whose prompts did not change costs 0.
 Stops cleanly on a Groq rate-limit error or when today's tokens per model near --daily-guard.
 """
 
@@ -24,13 +25,13 @@ from pathlib import Path
 import groq
 import plant
 
+from reviewpilot.agents import llm as llm_mod
 from reviewpilot.agents.graph import REVIEWERS, review
 from reviewpilot.agents.llm import chat_json
 from reviewpilot.context.build import build_context
 from reviewpilot.sandbox.runner import run_tests
 
 RESULTS = Path(__file__).parent / "results"
-PRS_DIR = RESULTS / "prs"
 USAGE = RESULTS / "usage.json"  # {date: {model: tokens}} for the daily guard
 PR_MARGIN = 15_000  # never start a PR with less than this left under the guard
 
@@ -49,8 +50,10 @@ def pr_hash(files: list[dict]) -> str:
     return hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest()[:16]
 
 
-def load_result(pr_id: str, commit: str, phash: str, any_commit: bool) -> dict | None:
-    path = PRS_DIR / f"{pr_id}.json"
+def load_result(
+    pr_id: str, commit: str, phash: str, any_commit: bool, results: Path = RESULTS
+) -> dict | None:
+    path = results / "prs" / f"{pr_id}.json"
     if not path.exists():
         return None
     r = json.loads(path.read_text(encoding="utf-8"))
@@ -113,20 +116,26 @@ def main() -> None:
     ap.add_argument("--limit", type=int, help="run at most this many new PRs")
     ap.add_argument("--daily-guard", type=int, default=180_000, help="tokens per model per day")
     ap.add_argument("--any-commit", action="store_true", help="accept results from other commits")
+    ap.add_argument("--set", choices=list(plant.SETS), default="original")
+    ap.add_argument("--out", default=str(RESULTS), help="results dir (gets prs/ inside)")
+    ap.add_argument("--cache", help="LLM cache dir (default data/cache)")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     logging.basicConfig(level=logging.WARNING, format="%(message)s")
 
+    if args.cache:  # a fresh cache dir makes every call real, so token numbers are honest
+        llm_mod.CACHE_DIR = Path(args.cache)
+    out_dir, prs = Path(args.out), plant.SETS[args.set]
     commit, dirty = git_commit()
-    PRS_DIR.mkdir(parents=True, exist_ok=True)
+    (out_dir / "prs").mkdir(parents=True, exist_ok=True)
     usage = json.loads(USAGE.read_text()) if USAGE.exists() else {}
     today = datetime.date.today().isoformat()
     used = usage.setdefault(today, {})
     ran = 0
-    for pr in plant.ORDER:
+    for pr in prs:
         _, files, _ = plant.build(pr)
         phash = pr_hash(files)
-        if load_result(pr["id"], commit, phash, args.any_commit):
+        if load_result(pr["id"], commit, phash, args.any_commit, out_dir):
             continue
         if args.limit is not None and ran >= args.limit:
             break
@@ -144,7 +153,7 @@ def main() -> None:
         USAGE.write_text(json.dumps(usage, indent=1))
         r = {"id": pr["id"], "commit": commit, "dirty": dirty, "pr_hash": phash,
              "date": today, **r}  # fmt: skip
-        (PRS_DIR / f"{pr['id']}.json").write_text(json.dumps(r, indent=1), encoding="utf-8")
+        (out_dir / "prs" / f"{pr['id']}.json").write_text(json.dumps(r, indent=1), encoding="utf-8")
         ran += 1
         t = r["tests"] or {}
         print(
@@ -152,10 +161,10 @@ def main() -> None:
             f"inline={len(r['inline'])} summary={len(r['summary'])} "
             f"tests={t.get('passed')}p/{len(t.get('failed') or [])}f errors={len(r['errors'])}"
         )
-    done = sum(load_result(p["id"], commit, pr_hash(plant.build(p)[1]), args.any_commit)
-               is not None for p in plant.ORDER)  # fmt: skip
+    done = sum(load_result(p["id"], commit, pr_hash(plant.build(p)[1]), args.any_commit, out_dir)
+               is not None for p in prs)  # fmt: skip
     print(
-        f"ran {ran} now; {done}/{len(plant.ORDER)} done for commit {commit[:7]}"
+        f"ran {ran} now; {done}/{len(prs)} {args.set} done for commit {commit[:7]}"
         f"{' (dirty tree)' if dirty else ''}; tokens today: {used}"
     )
 

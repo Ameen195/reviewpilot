@@ -1,0 +1,172 @@
+[
+ {
+  "id": "h01",
+  "category": "off_by_one",
+  "expected_reviewer": "bug",
+  "title": "last_n_days: simplify range",
+  "bug": "range(n, ...) returns n+1 dates instead of n",
+  "file": "shop/schedule.py",
+  "line": 22,
+  "files": [
+   {
+    "filename": "shop/schedule.py",
+    "status": "modified",
+    "patch": "@@ -19,4 +19,4 @@\n \n def last_n_days(today, n):\n     \"\"\"The n dates ending with today, oldest first (today included).\"\"\"\n-    return [today - timedelta(days=i) for i in range(n - 1, -1, -1)]\n+    return [today - timedelta(days=i) for i in range(n, -1, -1)]"
+   }
+  ]
+ },
+ {
+  "id": "h02",
+  "category": "logic",
+  "expected_reviewer": "bug",
+  "title": "Tidy overlaps comparison",
+  "bug": "<= makes touching half-open ranges overlap",
+  "file": "shop/schedule.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/schedule.py",
+    "status": "modified",
+    "patch": "@@ -14,7 +14,7 @@\n \n def overlaps(a_start, a_end, b_start, b_end):\n     \"\"\"True if the half-open ranges [a_start, a_end) and [b_start, b_end) share any time.\"\"\"\n-    return a_start < b_end and b_start < a_end\n+    return a_start <= b_end and b_start <= a_end\n \n \n def last_n_days(today, n):"
+   },
+   {
+    "filename": "tests/test_schedule.py",
+    "status": "added",
+    "patch": "@@ -0,0 +1,8 @@\n+from datetime import date\n+\n+from shop.schedule import overlaps\n+\n+\n+def test_touching_ranges_do_not_overlap():\n+    d1, d2, d3 = date(2026, 1, 1), date(2026, 1, 2), date(2026, 1, 3)\n+    assert not overlaps(d1, d2, d2, d3)"
+   }
+  ]
+ },
+ {
+  "id": "h03",
+  "category": "missing_null",
+  "expected_reviewer": "bug",
+  "title": "Add email_of helper",
+  "bug": "get_user returns None for an unknown id, ['email'] then raises TypeError",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,9 @@\n     conn.commit()\n \n \n+def email_of(conn, user_id):\n+    return get_user(conn, user_id)[\"email\"]\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "h04",
+  "category": "sql_injection",
+  "expected_reviewer": "security",
+  "title": "Add rename_user",
+  "bug": "name is f-string interpolated into the UPDATE (id is parameterised, name is not)",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,10 @@\n     conn.commit()\n \n \n+def rename_user(conn, user_id, name):\n+    conn.execute(f\"UPDATE users SET name = '{name}' WHERE id = ?\", (user_id,))\n+    conn.commit()\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "h05",
+  "category": "hardcoded_secret",
+  "expected_reviewer": "security",
+  "title": "Sync with the team calendar",
+  "bug": "calendar API token hardcoded in source",
+  "file": "shop/schedule.py",
+  "line": 3,
+  "files": [
+   {
+    "filename": "shop/schedule.py",
+    "status": "modified",
+    "patch": "@@ -1,4 +1,6 @@\n from datetime import timedelta\n+\n+CALENDAR_TOKEN = \"caltoken-0000-1111-2222-3333\"\n \n \n def business_days(start, days):\n@@ -12,6 +14,10 @@\n     return out\n \n \n+def calendar_headers():\n+    return {\"X-Calendar-Token\": CALENDAR_TOKEN}\n+\n+\n def overlaps(a_start, a_end, b_start, b_end):\n     \"\"\"True if the half-open ranges [a_start, a_end) and [b_start, b_end) share any time.\"\"\"\n     return a_start < b_end and b_start < a_end"
+   }
+  ]
+ },
+ {
+  "id": "h06",
+  "category": "race_condition",
+  "expected_reviewer": "bug",
+  "title": "reserve: shorter critical section",
+  "bug": "stock check runs outside the lock, two threads can both reserve the last units",
+  "file": "shop/inventory.py",
+  "line": 17,
+  "files": [
+   {
+    "filename": "shop/inventory.py",
+    "status": "modified",
+    "patch": "@@ -14,12 +14,11 @@\n \n     def reserve(self, sku, qty):\n         \"\"\"Take qty out of stock; returns False (and changes nothing) if there is not enough.\"\"\"\n+        if self.level(sku) < qty:\n+            return False\n         with self._lock:\n-            have = self._stock.get(sku, 0)\n-            if have < qty:\n-                return False\n-            self._stock[sku] = have - qty\n-            return True\n+            self._stock[sku] -= qty\n+        return True\n \n     def level(self, sku):\n         with self._lock:"
+   }
+  ]
+ },
+ {
+  "id": "h07",
+  "category": "resource_leak",
+  "expected_reviewer": "bug",
+  "title": "Add export_emails",
+  "bug": "output file never closed, rows may not be flushed",
+  "file": "shop/users_db.py",
+  "line": 34,
+  "files": [
+   {
+    "filename": "shop/users_db.py",
+    "status": "modified",
+    "patch": "@@ -30,5 +30,11 @@\n     conn.commit()\n \n \n+def export_emails(conn, path):\n+    out = open(path, \"w\", encoding=\"utf-8\")\n+    for (email,) in conn.execute(\"SELECT email FROM users\"):\n+        out.write(email + \"\\n\")\n+\n+\n def count_users(conn):\n     return conn.execute(\"SELECT COUNT(*) FROM users\").fetchone()[0]"
+   }
+  ]
+ },
+ {
+  "id": "h08",
+  "category": "missing_test",
+  "expected_reviewer": "tests",
+  "title": "Inventory.remove_sku",
+  "bug": "new remove_sku() has no tests",
+  "file": "shop/inventory.py",
+  "line": 24,
+  "files": [
+   {
+    "filename": "shop/inventory.py",
+    "status": "modified",
+    "patch": "@@ -21,6 +21,11 @@\n             self._stock[sku] = have - qty\n             return True\n \n+    def remove_sku(self, sku):\n+        \"\"\"Forget a SKU entirely; returns its last level (0 if unknown).\"\"\"\n+        with self._lock:\n+            return self._stock.pop(sku, 0)\n+\n     def level(self, sku):\n         with self._lock:\n             return self._stock.get(sku, 0)"
+   }
+  ]
+ },
+ {
+  "id": "h09",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Reject negative day counts",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/schedule.py",
+    "status": "modified",
+    "patch": "@@ -3,6 +3,8 @@\n \n def business_days(start, days):\n     \"\"\"The next `days` weekdays (Mon-Fri) after start, in order.\"\"\"\n+    if days < 0:\n+        raise ValueError(\"days must not be negative\")\n     out = []\n     d = start\n     while len(out) < days:"
+   },
+   {
+    "filename": "tests/test_schedule.py",
+    "status": "added",
+    "patch": "@@ -0,0 +1,15 @@\n+from datetime import date\n+\n+import pytest\n+\n+from shop.schedule import business_days\n+\n+\n+def test_business_days_skips_weekend():\n+    friday = date(2026, 11, 20)\n+    assert business_days(friday, 2) == [date(2026, 11, 23), date(2026, 11, 24)]\n+\n+\n+def test_business_days_negative():\n+    with pytest.raises(ValueError):\n+        business_days(date(2026, 11, 20), -1)"
+   }
+  ]
+ },
+ {
+  "id": "h10",
+  "category": "clean",
+  "expected_reviewer": null,
+  "title": "Round restock to pack size",
+  "bug": "",
+  "file": null,
+  "line": null,
+  "files": [
+   {
+    "filename": "shop/inventory.py",
+    "status": "modified",
+    "patch": "@@ -31,6 +31,7 @@\n     return sorted(sku for sku, n in levels.items() if n <= threshold)\n \n \n-def restock_amount(level, target):\n-    \"\"\"How many units to order to reach target; never negative.\"\"\"\n-    return max(target - level, 0)\n+def restock_amount(level, target, pack=1):\n+    \"\"\"How many units to order to reach target, rounded up to whole packs; never negative.\"\"\"\n+    need = max(target - level, 0)\n+    return -(-need // pack) * pack"
+   }
+  ]
+ }
+]

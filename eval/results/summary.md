@@ -1,4 +1,4 @@
-# Eval summary, corrected (commit ae20042, 50/50 PRs scored)
+# Eval summary, original set, corrected (commit c4db2c9, 50/50 PRs scored)
 
 - Detection rate: 0.925 (40 bug PRs, +/-2 lines)
 - Category accuracy (detected bugs, right reviewer): 1.0
@@ -6,8 +6,8 @@
 - Missing-tests notes per PR (separate): bug PRs 0.9, clean PRs 1.1
 - Duplicates: 1 in 1 PRs; test-file echoes: 4 in 4 PRs (4 bumped)
 - Code findings in summary: 4 (of which real bugs that should be inline: 0)
-- Tokens per PR: mean 2426, p95 4982, total 121312
-- Latency per PR: mean 7.7s, p95 16.28s
+- Tokens per PR (48 PRs not fully cached): mean 2527, p95 4982, total 121312
+- Latency per PR: mean 8.0s, p95 16.28s
 - PRs with reviewer errors: 0
 
 | Category | PRs | Detected | Rate | Right reviewer | Code FP/PR |
