@@ -1,0 +1,9 @@
+CODE_REVIEW_PROJECT_SPEC.md
+.env
+*.pem
+*.sqlite
+data/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
