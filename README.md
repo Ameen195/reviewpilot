@@ -143,5 +143,9 @@ Re-run the evaluation: `uv run python eval/run.py --set heldout --out <dir>`
 2. Copy `docs/example-workflow.yml` to `.github/workflows/reviewpilot.yml` in your repo.
 3. Open a PR from a branch of the same repo. The review appears within a minute or two.
 
+**Tested:** verified on a real PR in a separate test repo (PR #6). The review posted in 26 s, flagged
+the hardcoded API key as a high-severity security finding on line 1, and added a missing-tests note
+to the summary. One PR, one run: a smoke test, not an evaluation.
+
 The Action installs this project on the runner and uses the workflow's own `GITHUB_TOKEN`; your key
 goes only to Groq.
