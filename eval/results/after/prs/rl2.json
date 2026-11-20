@@ -1,0 +1,45 @@
+{
+ "id": "rl2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "33728915819004f3",
+ "date": "2026-11-20",
+ "tokens": 2248,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 775,
+  "openai/gpt-oss-120b": 1473
+ },
+ "latency_s": 6.27,
+ "llm_s": 6.67,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 11,
+   "severity": "medium",
+   "category": "bug",
+   "message": "File opened without a context manager may remain unclosed, leading to resource leaks especially on errors.",
+   "suggested_fix": "Use a with statement to open the file, e.g.,\nwith open(path,\"w\",newline=\"\",encoding=\"utf-8\") as f:\n    writer = csv.writer(f)\n    ...",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 11,
+   "severity": "medium",
+   "category": "tests",
+   "message": "write_report no longer closes the file, potentially leaking file descriptors.",
+   "suggested_fix": "Use a context manager (with open(...)) to ensure the file is closed after writing.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

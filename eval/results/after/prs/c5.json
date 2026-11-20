@@ -1,0 +1,34 @@
+{
+ "id": "c5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "11570e7bec3ed4bb",
+ "date": "2026-11-20",
+ "tokens": 3447,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 2583,
+  "openai/gpt-oss-20b": 864
+ },
+ "latency_s": 14.82,
+ "llm_s": 19.69,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "The new validation for non-positive timeouts is only tested for zero; negative values are not covered by tests.",
+   "suggested_fix": "Add a test case that verifies get_timeout raises ValueError when timeout is negative, e.g., get_timeout({\"timeout\": -5}).",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

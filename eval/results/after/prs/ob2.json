@@ -1,0 +1,36 @@
+{
+ "id": "ob2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "26fd986f95475377",
+ "date": "2026-11-20",
+ "tokens": 2056,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 699,
+  "openai/gpt-oss-120b": 1357
+ },
+ "latency_s": 8.98,
+ "llm_s": 10.96,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_paginate - assert [3, 4] == [1, 2]"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 25,
+   "severity": "high",
+   "category": "bug",
+   "message": "Off\u2011by\u2011one error: pagination start index should be (page-1)*per_page, not page*per_page, causing first page to skip items.",
+   "suggested_fix": "start = (page - 1) * per_page",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

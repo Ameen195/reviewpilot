@@ -1,0 +1,45 @@
+{
+ "id": "rl3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "cb0365c205331c21",
+ "date": "2026-11-20",
+ "tokens": 2048,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1317,
+  "openai/gpt-oss-20b": 731
+ },
+ "latency_s": 7.95,
+ "llm_s": 7.87,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 8,
+   "severity": "medium",
+   "category": "bug",
+   "message": "File is opened without a context manager, leading to a resource leak and potential file descriptor exhaustion.",
+   "suggested_fix": "Use a with statement: with open(path, encoding=\"utf-8\") as f: data = json.load(f)",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The load_config function now opens a file without closing it, potentially leaking file descriptors. No tests cover this behavior.",
+   "suggested_fix": "Use a context manager: with open(path, encoding=\"utf-8\") as f: data = json.load(f)",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

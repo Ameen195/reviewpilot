@@ -1,0 +1,55 @@
+{
+ "id": "rl4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "0477f27b04d34083",
+ "date": "2026-11-20",
+ "tokens": 2160,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 683,
+  "openai/gpt-oss-120b": 1477
+ },
+ "latency_s": 8.21,
+ "llm_s": 9.33,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "medium",
+   "category": "security",
+   "message": "count_in_file accepts an arbitrary file path and opens it with sqlite3, allowing potential path traversal or unauthorized database access.",
+   "suggested_fix": "Validate the provided path against an allowlist of expected database locations or restrict it to a safe directory.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "medium",
+   "category": "bug",
+   "message": "Database connection opened in count_in_file is never closed, causing a resource leak.",
+   "suggested_fix": "Use a context manager: with sqlite3.connect(path) as conn: return conn.execute(...).fetchone()[0]",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function count_in_file has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that create a temporary SQLite file, insert users, and assert count_in_file returns the correct count.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

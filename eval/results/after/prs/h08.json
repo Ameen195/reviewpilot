@@ -1,0 +1,34 @@
+{
+ "id": "h08",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "e9f869d93603bcb5",
+ "date": "2026-11-20",
+ "tokens": 3046,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1053,
+  "openai/gpt-oss-120b": 1993
+ },
+ "latency_s": 11.86,
+ "llm_s": 13.75,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/inventory.py",
+   "line": 24,
+   "severity": "low",
+   "category": "tests",
+   "message": "Method remove_sku introduces new behavior that is not covered by any tests.",
+   "suggested_fix": "Add tests that verify removing an existing SKU returns its previous level and that removing a non\u2011existent SKU returns 0.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

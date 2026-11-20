@@ -1,0 +1,26 @@
+{
+ "_note": "Human verdicts for the after-fix run at fc58b37 (both sets). Same rules as eval/results/manual_review.json.",
+ "rc4": {
+  "why": "'threading is not imported' is false (counter.py imports it on line 1, outside the patch). A false positive, not a separate real bug and not a duplicate.",
+  "unrelated": [{"file": "shop/counter.py", "line": 35, "category": "bug"}]
+ },
+ "rl4": {
+  "why": "Path-traversal warning next to the real leak finding (line 34) is a false positive, not a duplicate.",
+  "unrelated": [{"file": "shop/users_db.py", "line": 33, "category": "security"}]
+ },
+ "rl5": {
+  "why": "Only code finding at the leak line is a path-traversal warning; the leak itself is not reported. Miss.",
+  "unrelated": [{"file": "shop/files.py", "line": 18, "category": "security"}]
+ },
+ "h03": {
+  "why": "Security note at users_db.py:33 is about missing authorization, not the null deref (real hit is the bug finding at line 34). False positive, not a duplicate.",
+  "unrelated": [{"file": "shop/users_db.py", "line": 33, "category": "security"}]
+ },
+ "h07": {
+  "why": "Path-traversal (34) and access-control (35) notes; the unclosed file is never reported. Miss plus two false positives.",
+  "unrelated": [
+   {"file": "shop/users_db.py", "line": 34, "category": "security"},
+   {"file": "shop/users_db.py", "line": 35, "category": "security"}
+  ]
+ }
+}

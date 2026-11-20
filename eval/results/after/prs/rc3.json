@@ -1,0 +1,45 @@
+{
+ "id": "rc3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "3c8b35ff76728166",
+ "date": "2026-11-20",
+ "tokens": 2515,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 892,
+  "openai/gpt-oss-120b": 1623
+ },
+ "latency_s": 10.37,
+ "llm_s": 11.38,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/cache.py",
+   "line": 24,
+   "severity": "high",
+   "category": "bug",
+   "message": "The eviction logic is executed outside the lock, leading to a race condition where multiple threads could exceed max_items or delete the wrong entry.",
+   "suggested_fix": "Wrap the length check, eviction, and insertion inside the same lock block to ensure atomicity.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/cache.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The eviction logic in Cache.set() has been moved outside the lock, but no tests cover the scenario where the cache is full and a new key is inserted. This could lead to race conditions or incorrect eviction behavior.",
+   "suggested_fix": "Add tests that fill the cache to max_items, then insert a new key and assert that the oldest entry is evicted and that the new key is present.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,36 @@
+{
+ "id": "lg5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "f9befd65dd9803d7",
+ "date": "2026-11-20",
+ "tokens": 3944,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 2958,
+  "openai/gpt-oss-20b": 986
+ },
+ "latency_s": 13.06,
+ "llm_s": 15.32,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_stats.py::test_median_even - assert 1 == 1.5"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 15,
+   "severity": "high",
+   "category": "bug",
+   "message": "Changed median to use integer division, causing loss of fractional part and failing test for even-sized lists.",
+   "suggested_fix": "Replace '//' with '/' to compute true average, e.g., return (s[mid - 1] + s[mid]) / 2",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

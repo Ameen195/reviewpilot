@@ -1,0 +1,34 @@
+{
+ "id": "c8",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "87381e3aee28ac00",
+ "date": "2026-11-20",
+ "tokens": 2155,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 740,
+  "openai/gpt-oss-120b": 1415
+ },
+ "latency_s": 7.93,
+ "llm_s": 9.96,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 10,
+   "severity": "low",
+   "category": "tests",
+   "message": "write_report now accepts a header parameter but no tests cover this new functionality.",
+   "suggested_fix": "Add tests that call write_report with a custom header and verify the first row of the CSV matches the header tuple.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

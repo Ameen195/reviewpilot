@@ -1,0 +1,37 @@
+{
+ "id": "lg4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "db9b128dc63daf5d",
+ "date": "2026-11-20",
+ "tokens": 3829,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 940,
+  "openai/gpt-oss-120b": 2889
+ },
+ "latency_s": 14.79,
+ "llm_s": 17.27,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_total_and_discount - assert 12 == 20",
+   "tests/test_orders.py::test_total_two_items - assert 20 == 35"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 13,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The order_total function now adds price and quantity instead of multiplying, producing incorrect totals and causing test failures.",
+   "suggested_fix": "Change the generator expression to use multiplication: return sum(price * qty for price, qty in order.items)",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

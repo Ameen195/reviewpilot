@@ -1,0 +1,34 @@
+{
+ "id": "c2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "c178255dbf50835f",
+ "date": "2026-11-20",
+ "tokens": 1791,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 659,
+  "openai/gpt-oss-120b": 1132
+ },
+ "latency_s": 5.95,
+ "llm_s": 5.8,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/textutils.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new type hints for word_count; consider adding tests to verify type annotations and behavior.",
+   "suggested_fix": "Add unit tests that call word_count with various string inputs and assert the return type is int.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

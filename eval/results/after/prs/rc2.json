@@ -1,0 +1,45 @@
+{
+ "id": "rc2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "4ae2fb4b56b9c52b",
+ "date": "2026-11-20",
+ "tokens": 2018,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 711,
+  "openai/gpt-oss-120b": 1307
+ },
+ "latency_s": 7.89,
+ "llm_s": 10.37,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/counter.py",
+   "line": 25,
+   "severity": "high",
+   "category": "bug",
+   "message": "Removed the lock around incrementing _next, making next_id non\u2011thread\u2011safe and causing race conditions in concurrent use.",
+   "suggested_fix": "Re\u2011introduce the lock: with self._lock: i=self._next; self._next+=1; return i",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The next_id method was simplified by removing the lock, but no tests cover concurrent access to ensure thread safety.",
+   "suggested_fix": "Add tests that spawn multiple threads calling next_id concurrently and verify that all returned IDs are unique and sequential.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

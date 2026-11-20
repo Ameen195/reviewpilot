@@ -1,0 +1,47 @@
+{
+ "id": "mn1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "6b7171818c4978c1",
+ "date": "2026-11-20",
+ "tokens": 2538,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 942,
+  "openai/gpt-oss-120b": 1596
+ },
+ "latency_s": 9.33,
+ "llm_s": 10.84,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_users_db.py::test_add_and_get - TypeError: cannot unpack no..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 17,
+   "severity": "high",
+   "category": "bug",
+   "message": "If the user does not exist, fetchone() returns None, causing unpacking error.",
+   "suggested_fix": "Check for None before unpacking, e.g., row = conn.execute(...).fetchone(); if row is None: return None; else: id_, name, email = row",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "get_user now unpacks the result of fetchone() directly, which will raise a TypeError if the query returns None (i.e., user not found). No tests cover this edge case.",
+   "suggested_fix": "Add a test that calls get_user with a non\u2011existent user_id and asserts that it returns None or handles the exception appropriately.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

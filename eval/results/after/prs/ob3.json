@@ -1,0 +1,36 @@
+{
+ "id": "ob3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "a1ec871a43647d4c",
+ "date": "2026-11-20",
+ "tokens": 2174,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 778,
+  "openai/gpt-oss-120b": 1396
+ },
+ "latency_s": 10.8,
+ "llm_s": 12.88,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_textutils.py::test_truncate - AssertionError: assert 'hello..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/textutils.py",
+   "line": 13,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The truncation now adds one extra character, causing the result to exceed the specified limit and failing tests.",
+   "suggested_fix": "Change the slice to text[:limit - len(suffix)] + suffix (remove the +1).",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

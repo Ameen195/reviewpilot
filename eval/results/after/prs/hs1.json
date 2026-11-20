@@ -1,0 +1,47 @@
+{
+ "id": "hs1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "61e6d4e4938c7d03",
+ "date": "2026-11-20",
+ "tokens": 2304,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 781,
+  "openai/gpt-oss-120b": 1523
+ },
+ "latency_s": 12.04,
+ "llm_s": 16.5,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_config.py::test_api_key_missing - Failed: DID NOT RAISE Run..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 14,
+   "severity": "critical",
+   "category": "security",
+   "message": "Hardcoded default API key introduces a secret into source code, risking credential leakage and unauthorized access.",
+   "suggested_fix": "Remove the default value and require the environment variable to be set, or load from a secure vault.",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "No tests cover the new default API key behavior introduced in shop/config.py.",
+   "suggested_fix": "Add tests that verify api_key() returns the default value when SHOP_API_KEY is unset and that it still raises when the environment variable is explicitly set to an empty string.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

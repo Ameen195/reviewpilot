@@ -1,0 +1,55 @@
+{
+ "id": "rc4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "214c8e72caef08ac",
+ "date": "2026-11-20",
+ "tokens": 2740,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 903,
+  "openai/gpt-oss-120b": 1837
+ },
+ "latency_s": 8.12,
+ "llm_s": 8.22,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/counter.py",
+   "line": 38,
+   "severity": "high",
+   "category": "bug",
+   "message": "`allow` updates `self.used` without acquiring the lock, leading to race conditions in multithreaded use.",
+   "suggested_fix": "Wrap the check and increment in `with self._lock:` block.",
+   "confidence": 0.95,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/counter.py",
+   "line": 35,
+   "severity": "medium",
+   "category": "bug",
+   "message": "`threading` is not imported, causing a NameError when initializing RateLimiter.",
+   "suggested_fix": "Add `import threading` at the top of the file.",
+   "confidence": 0.98,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new RateLimiter class and its allow method.",
+   "suggested_fix": "Add unit tests that instantiate RateLimiter, call allow multiple times, and assert the return values and internal state.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

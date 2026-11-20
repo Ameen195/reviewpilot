@@ -1,0 +1,34 @@
+{
+ "id": "mt5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "77ce12dcae729385",
+ "date": "2026-11-20",
+ "tokens": 2300,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 794,
+  "openai/gpt-oss-120b": 1506
+ },
+ "latency_s": 8.41,
+ "llm_s": 9.94,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": 14,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new reset method.",
+   "suggested_fix": "Add unit tests that call reset and verify the counter value is zero.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

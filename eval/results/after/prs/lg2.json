@@ -1,0 +1,47 @@
+{
+ "id": "lg2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "4368a0080eb29d0a",
+ "date": "2026-11-20",
+ "tokens": 2268,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 827,
+  "openai/gpt-oss-120b": 1441
+ },
+ "latency_s": 11.0,
+ "llm_s": 13.25,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_total_and_discount - assert 20.0 == 180"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 20,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The discount calculation is incorrect; it returns the discounted amount instead of the amount due after discount, causing test failures.",
+   "suggested_fix": "return round(total * (100 - percent) / 100, 2)",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 20,
+   "severity": "medium",
+   "category": "tests",
+   "message": "apply_discount now returns the discount amount instead of the remaining total, but no tests cover this new behavior.",
+   "suggested_fix": "Add tests verifying that apply_discount(total, percent) returns the correct discount amount and that the remaining total is calculated correctly elsewhere.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

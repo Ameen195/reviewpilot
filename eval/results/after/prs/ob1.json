@@ -1,0 +1,36 @@
+{
+ "id": "ob1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "2a18dde49f79274a",
+ "date": "2026-11-20",
+ "tokens": 2240,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1440,
+  "openai/gpt-oss-20b": 800
+ },
+ "latency_s": 2.73,
+ "llm_s": 3.53,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_stats.py::test_moving_average - assert [1.5, 2.5] == [1.5, ..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 22,
+   "severity": "high",
+   "category": "bug",
+   "message": "The loop range is off by one, causing the last window to be omitted and the moving_average result to be too short.",
+   "suggested_fix": "Change the range to range(len(xs) - window + 1) as originally intended.",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

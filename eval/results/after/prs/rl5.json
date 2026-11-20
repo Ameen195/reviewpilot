@@ -1,0 +1,45 @@
+{
+ "id": "rl5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "dd38057097601d23",
+ "date": "2026-11-20",
+ "tokens": 2135,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 648,
+  "openai/gpt-oss-120b": 1487
+ },
+ "latency_s": 8.61,
+ "llm_s": 8.38,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 18,
+   "severity": "medium",
+   "category": "security",
+   "message": "The function opens a file path provided by the caller without any validation, allowing potential path traversal or exposure of arbitrary files.",
+   "suggested_fix": "Validate the path against an allowed directory or use safe\u2011join methods before opening, e.g.,\n\n```python\nimport os\n\ndef line_count(path, base_dir=\"/allowed/dir\"):\n    full_path = os.path.abspath(os.path.join(base_dir, path))\n    if not full_path.startswith(os.path.abspath(base_dir)):\n        raise ValueError(\"Invalid file path\")\n    with open(full_path, encoding=\"utf-8\") as f:\n        return sum(1 for _ in f)\n```",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function line_count has no tests covering its behavior.",
+   "suggested_fix": "Add tests that create a temporary file with known number of lines and assert line_count returns that number.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

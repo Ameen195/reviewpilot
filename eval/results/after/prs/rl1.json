@@ -1,0 +1,45 @@
+{
+ "id": "rl1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "915706f095735dda",
+ "date": "2026-11-20",
+ "tokens": 2118,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 776,
+  "openai/gpt-oss-120b": 1342
+ },
+ "latency_s": 7.86,
+ "llm_s": 7.69,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 6,
+   "severity": "medium",
+   "category": "bug",
+   "message": "File is opened without a context manager, so it may not be closed, leading to a resource leak.",
+   "suggested_fix": "Use a with statement: with open(path, encoding=\"utf-8\") as f: return [line.rstrip(\"\\n\") for line in f]",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "The updated read_lines function opens a file without a context manager, leaving the file open. No tests currently verify that the file is properly closed after reading.",
+   "suggested_fix": "Add a test that checks the file descriptor count before and after calling read_lines, or refactor read_lines to use a with statement to ensure the file is closed.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

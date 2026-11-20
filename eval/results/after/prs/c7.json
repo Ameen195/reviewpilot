@@ -1,0 +1,23 @@
+{
+ "id": "c7",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "d7df9914886eede1",
+ "date": "2026-11-20",
+ "tokens": 4176,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 957,
+  "openai/gpt-oss-120b": 3219
+ },
+ "latency_s": 17.84,
+ "llm_s": 23.29,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

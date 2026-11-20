@@ -1,0 +1,45 @@
+{
+ "id": "rc1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "cc7b579ed2f5bbc4",
+ "date": "2026-11-20",
+ "tokens": 2031,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 743,
+  "openai/gpt-oss-120b": 1288
+ },
+ "latency_s": 6.92,
+ "llm_s": 8.99,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/counter.py",
+   "line": 10,
+   "severity": "high",
+   "category": "bug",
+   "message": "Removing the lock makes increment() non\u2011atomic, leading to race conditions when used from multiple threads, potentially corrupting the counter value.",
+   "suggested_fix": "Re\u2011introduce the lock (e.g., use 'with self._lock:' around the increment) or use an atomic primitive like threading.AtomicInteger if available.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/counter.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The removal of the lock in Counter.increment changes its thread\u2011safety behavior, but no tests cover concurrent usage.",
+   "suggested_fix": "Add tests that spawn multiple threads calling increment concurrently and verify the final value is correct.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

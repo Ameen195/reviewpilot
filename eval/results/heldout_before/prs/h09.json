@@ -1,0 +1,34 @@
+{
+ "id": "h09",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "5e2800de9c5376c3",
+ "date": "2026-11-20",
+ "tokens": 5003,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 1750,
+  "openai/gpt-oss-120b": 3253
+ },
+ "latency_s": 25.79,
+ "llm_s": 40.49,
+ "tests": {
+  "passed": 26,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/schedule.py",
+   "line": 6,
+   "severity": "medium",
+   "category": "tests",
+   "message": "No tests cover the new ValueError raised when days is negative.",
+   "suggested_fix": "Add a test that verifies business_days raises ValueError for negative input.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

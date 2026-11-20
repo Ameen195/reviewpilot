@@ -1,0 +1,34 @@
+{
+ "id": "mt3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "63c3df6a5f758329",
+ "date": "2026-11-20",
+ "tokens": 2150,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 738,
+  "openai/gpt-oss-120b": 1412
+ },
+ "latency_s": 7.85,
+ "llm_s": 7.24,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 29,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new coupon_counts function.",
+   "suggested_fix": "Add unit tests that create orders with and without coupons and assert the returned counts match expectations.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "h01",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "9df8f9dadfdeef43",
+ "date": "2026-11-20",
+ "tokens": 2081,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1350,
+  "openai/gpt-oss-20b": 731
+ },
+ "latency_s": 3.31,
+ "llm_s": 4.1,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/schedule.py",
+   "line": 22,
+   "severity": "medium",
+   "category": "bug",
+   "message": "The function now returns n+1 dates instead of n, adding an extra day before the intended range.",
+   "suggested_fix": "Change range to range(n-1, -1, -1) to produce exactly n dates.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/schedule.py",
+   "line": 22,
+   "severity": "medium",
+   "category": "tests",
+   "message": "last_n_days now returns n+1 days instead of n, changing its contract.",
+   "suggested_fix": "Adjust the range to range(n-1, -1, -1) or update documentation and tests to reflect the new behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

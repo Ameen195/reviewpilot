@@ -1,0 +1,45 @@
+{
+ "id": "mn3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "1da9a61313369eb6",
+ "date": "2026-11-20",
+ "tokens": 1967,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1312,
+  "openai/gpt-oss-20b": 655
+ },
+ "latency_s": 4.73,
+ "llm_s": 4.78,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 37,
+   "severity": "high",
+   "category": "bug",
+   "message": "item_count does not handle case where find_order returns None, leading to AttributeError when accessing .items",
+   "suggested_fix": "order = find_order(orders, order_id)\n    return len(order.items) if order else 0",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/orders.py",
+   "line": 36,
+   "severity": "medium",
+   "category": "tests",
+   "message": "New function item_count has no tests covering its behavior.",
+   "suggested_fix": "Add tests that verify item_count returns correct count for existing orders and handles missing orders appropriately.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

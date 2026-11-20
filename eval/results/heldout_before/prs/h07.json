@@ -1,0 +1,45 @@
+{
+ "id": "h07",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "d4b0a5e1d42a2251",
+ "date": "2026-11-20",
+ "tokens": 2190,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 700,
+  "openai/gpt-oss-120b": 1490
+ },
+ "latency_s": 9.85,
+ "llm_s": 11.87,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "medium",
+   "category": "security",
+   "message": "The function writes user email addresses to an arbitrary file path without validation, leading to possible path traversal and sensitive data exposure.",
+   "suggested_fix": "Validate and sanitize the 'path' argument or restrict it to a safe directory, and use a context manager (with open(...)) to ensure proper handling.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function export_emails has no tests covering its behavior.",
+   "suggested_fix": "Add tests that create a temporary database, insert users, call export_emails, and verify the output file contains the expected emails.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

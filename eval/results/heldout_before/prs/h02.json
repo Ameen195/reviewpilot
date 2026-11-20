@@ -1,0 +1,67 @@
+{
+ "id": "h02",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "6f1932fdb27f2657",
+ "date": "2026-11-20",
+ "tokens": 5051,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 3167,
+  "openai/gpt-oss-20b": 1884
+ },
+ "latency_s": 2.72,
+ "llm_s": 3.42,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_schedule.py::test_touching_ranges_do_not_overlap - assert n..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/schedule.py",
+   "line": 17,
+   "severity": "high",
+   "category": "bug",
+   "message": "Using <= makes touching half-open intervals count as overlapping, causing test failure for non-overlapping edge case.",
+   "suggested_fix": "Change the condition back to a_start < b_end and b_start < a_end",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "tests/test_schedule.py",
+   "line": null,
+   "severity": "high",
+   "category": "bug",
+   "message": "The overlaps function likely treats adjacent date ranges as overlapping, causing the test for touching ranges to fail.",
+   "suggested_fix": "Adjust the overlap logic to use strict inequality (e.g., start1 < end2 and start2 < end1) so that end == start is not considered overlapping.",
+   "confidence": 0.92,
+   "bumped_by_tests": true
+  },
+  {
+   "file": "tests/test_schedule.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The overlaps function is only tested for touching ranges; other overlap scenarios (full overlap, partial overlap, reverse order) are not covered by tests in this PR.",
+   "suggested_fix": "Add tests for overlapping ranges, including cases where one range is entirely within another, ranges that partially overlap, and ranges provided in reverse chronological order.",
+   "confidence": 0.8,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/schedule.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new inclusive overlap behavior introduced in overlaps()",
+   "suggested_fix": "Add tests verifying that ranges touching at endpoints now return True, e.g., assert overlaps(1,2,2,3) is True",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

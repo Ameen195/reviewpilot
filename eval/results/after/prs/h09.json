@@ -1,0 +1,23 @@
+{
+ "id": "h09",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "5e2800de9c5376c3",
+ "date": "2026-11-20",
+ "tokens": 4174,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 909,
+  "openai/gpt-oss-120b": 3265
+ },
+ "latency_s": 15.4,
+ "llm_s": 20.24,
+ "tests": {
+  "passed": 26,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

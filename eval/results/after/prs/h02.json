@@ -1,0 +1,47 @@
+{
+ "id": "h02",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "6f1932fdb27f2657",
+ "date": "2026-11-20",
+ "tokens": 4180,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 977,
+  "openai/gpt-oss-120b": 3203
+ },
+ "latency_s": 18.09,
+ "llm_s": 25.64,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_schedule.py::test_touching_ranges_do_not_overlap - assert n..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/schedule.py",
+   "line": 17,
+   "severity": "high",
+   "category": "bug",
+   "message": "Using <= makes touching half-open intervals count as overlapping, contradicting the intended half-open semantics and causing test failure.",
+   "suggested_fix": "Change the condition back to use strict inequality: return a_start < b_end and b_start < a_end",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/schedule.py",
+   "line": 17,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The updated overlaps function now treats touching ranges as overlapping, but no tests cover this new inclusive behavior.",
+   "suggested_fix": "Add tests for inclusive overlap or revert to exclusive logic.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

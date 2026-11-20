@@ -1,0 +1,36 @@
+{
+ "id": "lg3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "e786342b5d036057",
+ "date": "2026-11-20",
+ "tokens": 1978,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1271,
+  "openai/gpt-oss-20b": 707
+ },
+ "latency_s": 5.0,
+ "llm_s": 5.21,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_stats.py::test_clamp - assert 0 == 3"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 33,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The clamp implementation is incorrect; it returns min(lo, max(x, hi)) which yields lo for values below lo and hi for values above hi, swapping the bounds and causing wrong results (e.g., clamp(0,3,5) returns 0).",
+   "suggested_fix": "return max(lo, min(x, hi))",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

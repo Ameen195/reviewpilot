@@ -1,0 +1,48 @@
+{
+ "id": "mn5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "5b94a8e859291ab9",
+ "date": "2026-11-20",
+ "tokens": 2376,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 884,
+  "openai/gpt-oss-120b": 1492
+ },
+ "latency_s": 8.92,
+ "llm_s": 11.87,
+ "tests": {
+  "passed": 22,
+  "failed": [
+   "tests/test_cache.py::test_set_get - TypeError: cannot unpack non-itera...",
+   "tests/test_cache.py::test_evicts_oldest - TypeError: cannot unpack non..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/cache.py",
+   "line": 14,
+   "severity": "critical",
+   "category": "bug",
+   "message": "Unpacking result of dict.get without handling missing key causes TypeError when key is absent.",
+   "suggested_fix": "item = self._data.get(key); if item is None: return default; value, expires = item",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/cache.py",
+   "line": 14,
+   "severity": "low",
+   "category": "tests",
+   "message": "Cache.get now unconditionally unpacks the result of self._data.get(key), which returns None for missing keys, causing a TypeError. No tests cover the missing-key case.",
+   "suggested_fix": "Add a check: item = self._data.get(key); if item is None: return default; else: value, expires = item",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

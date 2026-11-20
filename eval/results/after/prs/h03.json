@@ -1,0 +1,55 @@
+{
+ "id": "h03",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "80eb178d03722226",
+ "date": "2026-11-20",
+ "tokens": 2010,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 646,
+  "openai/gpt-oss-120b": 1364
+ },
+ "latency_s": 9.23,
+ "llm_s": 11.51,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "medium",
+   "category": "security",
+   "message": "The new email_of function exposes a user's email address without any authentication or authorization checks, potentially leading to information disclosure.",
+   "suggested_fix": "Add appropriate access control checks before returning the email, e.g., verify the caller has permission to view the user's email.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "medium",
+   "category": "bug",
+   "message": "If get_user returns None (e.g., user_id not found), indexing ['email'] will raise a TypeError.",
+   "suggested_fix": "Check the result before indexing, e.g., user = get_user(conn, user_id); return user['email'] if user else None",
+   "confidence": 0.93,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new email_of function.",
+   "suggested_fix": "Add unit tests that call email_of with valid and invalid user_ids to ensure correct behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "hs5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "0f2e2af1e4ac80ce",
+ "date": "2026-11-20",
+ "tokens": 1922,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 663,
+  "openai/gpt-oss-120b": 1259
+ },
+ "latency_s": 7.89,
+ "llm_s": 10.95,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/files.py",
+   "line": 18,
+   "severity": "medium",
+   "category": "security",
+   "message": "Hardcoded bearer token exposes credentials in source code.",
+   "suggested_fix": "Retrieve the token from an environment variable or secure vault instead of hardcoding it.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/files.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function upload_headers has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests that verify the returned headers dictionary contains the expected Authorization key and token.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

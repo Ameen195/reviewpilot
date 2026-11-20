@@ -1,0 +1,45 @@
+{
+ "id": "rc5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "15a5f4197e9218cd",
+ "date": "2026-11-20",
+ "tokens": 2178,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 721,
+  "openai/gpt-oss-120b": 1457
+ },
+ "latency_s": 9.02,
+ "llm_s": 10.84,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 16,
+   "severity": "high",
+   "category": "bug",
+   "message": "add_user_unique checks for existing email then inserts, but between the check and insert another thread could add the same email, causing duplicate entries.",
+   "suggested_fix": "Wrap the check and insert in a transaction with a UNIQUE constraint on email, or handle duplicate error on insert.",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 16,
+   "severity": "low",
+   "category": "tests",
+   "message": "add_user_unique is a new function with no tests covering its behavior",
+   "suggested_fix": "Add tests that verify it raises ValueError when email exists and successfully adds a new user otherwise",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

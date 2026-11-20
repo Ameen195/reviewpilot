@@ -1,0 +1,45 @@
+{
+ "id": "h06",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "222eaa659171ca63",
+ "date": "2026-11-20",
+ "tokens": 2487,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 888,
+  "openai/gpt-oss-120b": 1599
+ },
+ "latency_s": 10.48,
+ "llm_s": 11.2,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/inventory.py",
+   "line": 17,
+   "severity": "high",
+   "category": "bug",
+   "message": "The stock availability check is performed outside the lock, creating a race condition where stock can become insufficient after the check but before the decrement, potentially resulting in negative inventory.",
+   "suggested_fix": "Perform the availability check and the decrement inside the same lock block, e.g., acquire the lock first, then check have = self._stock.get(sku,0) and compare to qty before subtracting.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/inventory.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The reserve method now performs a level check outside the lock, creating a race condition where stock could change between the check and the update. No tests cover this scenario.",
+   "suggested_fix": "Add a test that simulates concurrent reservations to ensure reserve behaves correctly under contention, or move the level check inside the lock.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

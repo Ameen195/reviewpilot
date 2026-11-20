@@ -1,0 +1,45 @@
+{
+ "id": "hs2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "1f635b23d53932af",
+ "date": "2026-11-20",
+ "tokens": 2005,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1331,
+  "openai/gpt-oss-20b": 674
+ },
+ "latency_s": 6.87,
+ "llm_s": 6.65,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 21,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded database credentials (username and password) are embedded in the source code, risking credential leakage.",
+   "suggested_fix": "Replace the hardcoded URL with a placeholder and require the full DB URL to be provided via environment variable or secure secret store, e.g., os.environ['SHOP_DB_URL'] without default credentials.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": 21,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new default database URL in db_url()",
+   "suggested_fix": "Add a test that verifies db_url() returns the expected default when SHOP_DB_URL is unset",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

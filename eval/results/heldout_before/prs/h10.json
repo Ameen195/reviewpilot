@@ -1,0 +1,45 @@
+{
+ "id": "h10",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "00553613665315df",
+ "date": "2026-11-20",
+ "tokens": 2209,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 737,
+  "openai/gpt-oss-120b": 1472
+ },
+ "latency_s": 8.28,
+ "llm_s": 8.11,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/inventory.py",
+   "line": 37,
+   "severity": "high",
+   "category": "bug",
+   "message": "If pack is zero or negative, the integer division will raise a ZeroDivisionError or produce incorrect results.",
+   "suggested_fix": "Add a validation for pack > 0, e.g., if pack <= 0: raise ValueError('pack must be positive') before the calculation.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/inventory.py",
+   "line": 34,
+   "severity": "medium",
+   "category": "tests",
+   "message": "No tests cover the new pack rounding behavior of restock_amount.",
+   "suggested_fix": "Add unit tests that verify restock_amount correctly rounds up to the nearest pack size for various pack values.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

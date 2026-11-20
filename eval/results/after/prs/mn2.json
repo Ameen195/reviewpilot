@@ -1,0 +1,36 @@
+{
+ "id": "mn2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "25b4e51f0261064c",
+ "date": "2026-11-20",
+ "tokens": 4240,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 952,
+  "openai/gpt-oss-120b": 3288
+ },
+ "latency_s": 21.86,
+ "llm_s": 33.01,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_orders.py::test_coupon_code - AttributeError: 'NoneType' ob..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 30,
+   "severity": "high",
+   "category": "bug",
+   "message": "AttributeError when order.coupon is None or missing; calling .upper() on None fails.",
+   "suggested_fix": "if not getattr(order, 'coupon', None): return None else: return order.coupon.upper()",
+   "confidence": 0.97,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

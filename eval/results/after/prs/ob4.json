@@ -1,0 +1,45 @@
+{
+ "id": "ob4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "fd96c4f393d577ab",
+ "date": "2026-11-20",
+ "tokens": 2004,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 691,
+  "openai/gpt-oss-120b": 1313
+ },
+ "latency_s": 8.86,
+ "llm_s": 10.5,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/stats.py",
+   "line": 32,
+   "severity": "high",
+   "category": "bug",
+   "message": "Off\u2011by\u2011one error: returns only n\u20111 items instead of n, and fails for n<=0 causing empty slice or unexpected result.",
+   "suggested_fix": "return sorted(xs)[:n]",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/stats.py",
+   "line": 31,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new bottom_n helper function.",
+   "suggested_fix": "Add unit tests for bottom_n to ensure correct behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

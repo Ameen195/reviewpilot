@@ -1,0 +1,57 @@
+{
+ "id": "mn4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "b35f9249cfa02742",
+ "date": "2026-11-20",
+ "tokens": 2257,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 915,
+  "openai/gpt-oss-120b": 1342
+ },
+ "latency_s": 8.84,
+ "llm_s": 12.36,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_config.py::test_api_key_missing - AttributeError: 'NoneType..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/config.py",
+   "line": 14,
+   "severity": "high",
+   "category": "bug",
+   "message": "Calling .strip() on None when SHOP_API_KEY is not set causes AttributeError instead of the intended RuntimeError.",
+   "suggested_fix": "key = os.environ.get(\"SHOP_API_KEY\"); if not key: raise RuntimeError(\"SHOP_API_KEY is not set\"); return key.strip()",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The updated api_key() function now strips whitespace from the environment variable but lacks tests verifying this behavior.",
+   "suggested_fix": "Add a test that sets SHOP_API_KEY to a value with leading/trailing spaces and asserts that api_key() returns the stripped string.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/config.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The function no longer checks for a missing SHOP_API_KEY, causing an AttributeError when the variable is unset. No test covers this edge case.",
+   "suggested_fix": "Add a test that ensures a RuntimeError (or appropriate exception) is raised when SHOP_API_KEY is not set, or restore the missing-key check.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

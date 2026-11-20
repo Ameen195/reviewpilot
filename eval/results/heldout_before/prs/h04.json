@@ -1,0 +1,45 @@
+{
+ "id": "h04",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "89762d0c4272b87b",
+ "date": "2026-11-20",
+ "tokens": 2092,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 664,
+  "openai/gpt-oss-120b": 1428
+ },
+ "latency_s": 2.12,
+ "llm_s": 1.79,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "high",
+   "category": "security",
+   "message": "SQL injection risk: user-provided 'name' is interpolated directly into the query string.",
+   "suggested_fix": "Use a parameter placeholder for name: conn.execute(\"UPDATE users SET name = ? WHERE id = ?\", (name, user_id))",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "Function rename_user is added but not covered by any tests.",
+   "suggested_fix": "Add tests that call rename_user with valid and invalid inputs, verifying the database update and commit behavior.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,11 @@
+{
+ "_note": "Human verdicts for the held-out set at f4a2aa2 (before the fixes). Same rules as eval/results/manual_review.json.",
+ "h03": {
+  "why": "Security note at users_db.py:33 is about missing authorization, not the null deref (real hit is the bug finding at line 34). False positive, not a duplicate.",
+  "unrelated": [{"file": "shop/users_db.py", "line": 33, "category": "security"}]
+ },
+ "h07": {
+  "why": "Only code finding at the leak line is a path-traversal warning; the unclosed file is not reported. Miss.",
+  "unrelated": [{"file": "shop/users_db.py", "line": 34, "category": "security"}]
+ }
+}

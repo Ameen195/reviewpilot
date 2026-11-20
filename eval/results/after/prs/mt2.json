@@ -1,0 +1,45 @@
+{
+ "id": "mt2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "5f587d71fc8e5d13",
+ "date": "2026-11-20",
+ "tokens": 1924,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1272,
+  "openai/gpt-oss-20b": 652
+ },
+ "latency_s": 7.0,
+ "llm_s": 6.9,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/textutils.py",
+   "line": 16,
+   "severity": "low",
+   "category": "bug",
+   "message": "capitalize_words does not handle None input and will raise an exception if called with None",
+   "suggested_fix": "Add a check: if text is None: return '' (or raise a TypeError) before processing",
+   "confidence": 0.92,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/textutils.py",
+   "line": 16,
+   "severity": "low",
+   "category": "tests",
+   "message": "New function capitalize_words has no tests covering its behavior.",
+   "suggested_fix": "Add unit tests for capitalize_words, including edge cases such as empty string, multiple spaces, and non-alphabetic characters.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,45 @@
+{
+ "id": "hs3",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "1370143d2952ef9f",
+ "date": "2026-11-20",
+ "tokens": 2046,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 707,
+  "openai/gpt-oss-120b": 1339
+ },
+ "latency_s": 6.85,
+ "llm_s": 6.81,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/payments.py",
+   "line": 1,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded Stripe secret key is committed in source code, exposing credentials.",
+   "suggested_fix": "Load the secret from environment variables or a secure vault, e.g., STRIPE_SECRET = os.getenv('STRIPE_SECRET')",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/payments.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new payments module.",
+   "suggested_fix": "Add unit tests for STRIPE_SECRET and charge_headers to ensure correct header generation.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,55 @@
+{
+ "id": "h07",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "d4b0a5e1d42a2251",
+ "date": "2026-11-20",
+ "tokens": 2248,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 715,
+  "openai/gpt-oss-120b": 1533
+ },
+ "latency_s": 4.17,
+ "llm_s": 4.26,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 35,
+   "severity": "high",
+   "category": "security",
+   "message": "Exporting all user email addresses without any access control can expose sensitive personal data.",
+   "suggested_fix": "Add authentication/authorization checks to ensure only privileged users can invoke export_emails, and consider encrypting or redacting data as needed.",
+   "confidence": 0.95,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "medium",
+   "category": "security",
+   "message": "The function opens a file at a user\u2011controlled path without validation, leading to possible path traversal or overwriting of arbitrary files.",
+   "suggested_fix": "Validate and sanitize the 'path' argument or restrict it to a safe directory before opening the file.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new export_emails function.",
+   "suggested_fix": "Add unit tests that verify export_emails writes the correct emails to the specified file.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

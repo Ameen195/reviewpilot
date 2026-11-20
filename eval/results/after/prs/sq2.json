@@ -1,0 +1,45 @@
+{
+ "id": "sq2",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "43ae70975c2d066b",
+ "date": "2026-11-20",
+ "tokens": 2065,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1330,
+  "openai/gpt-oss-20b": 735
+ },
+ "latency_s": 7.84,
+ "llm_s": 7.85,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 29,
+   "severity": "high",
+   "category": "security",
+   "message": "SQL query is built by concatenating user_id, enabling SQL injection.",
+   "suggested_fix": "Use parameterized query: conn.execute(\"DELETE FROM users WHERE id = ?\", (user_id,))",
+   "confidence": 1.0,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": null,
+   "severity": "medium",
+   "category": "tests",
+   "message": "The delete_user function now builds the SQL query by concatenating the user_id directly, but there are no tests covering this function or its new behavior.",
+   "suggested_fix": "Add unit tests that call delete_user with various user_id values, including edge cases and potential injection strings, to ensure correct execution and safety.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

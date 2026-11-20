@@ -1,0 +1,45 @@
+{
+ "id": "h01",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "9df8f9dadfdeef43",
+ "date": "2026-11-20",
+ "tokens": 2112,
+ "tokens_by_model": {
+  "openai/gpt-oss-120b": 1371,
+  "openai/gpt-oss-20b": 741
+ },
+ "latency_s": 2.57,
+ "llm_s": 3.84,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/schedule.py",
+   "line": 22,
+   "severity": "high",
+   "category": "bug",
+   "message": "The function now returns n+1 dates instead of n, introducing an off\u2011by\u2011one error.",
+   "suggested_fix": "Change the range to range(n-1, -1, -1) so exactly n dates are produced.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/schedule.py",
+   "line": 22,
+   "severity": "medium",
+   "category": "tests",
+   "message": "last_n_days now returns n+1 days instead of n, but no tests cover this change.",
+   "suggested_fix": "Add tests verifying the length and contents of the returned list for various n values.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

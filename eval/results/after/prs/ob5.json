@@ -1,0 +1,36 @@
+{
+ "id": "ob5",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "b4d708dd15fe517d",
+ "date": "2026-11-20",
+ "tokens": 3929,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 930,
+  "openai/gpt-oss-120b": 2999
+ },
+ "latency_s": 17.86,
+ "llm_s": 24.4,
+ "tests": {
+  "passed": 24,
+  "failed": [
+   "tests/test_textutils.py::test_chunk_odd - assert [[1, 2]] == [[1, 2], ..."
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/textutils.py",
+   "line": 23,
+   "severity": "critical",
+   "category": "bug",
+   "message": "The new range stops at len(items)-1, causing the last chunk to be omitted when the list length is not an exact multiple of size, leading to incorrect results (test failure).",
+   "suggested_fix": "Replace the range with the original: range(0, len(items), size)",
+   "confidence": 0.99,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}

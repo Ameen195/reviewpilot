@@ -1,0 +1,45 @@
+{
+ "id": "h05",
+ "commit": "f4a2aa27cdfe8153fc9323403a7578c74b05f87f",
+ "dirty": false,
+ "pr_hash": "3386bfce0bc9ba3e",
+ "date": "2026-11-20",
+ "tokens": 2631,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 902,
+  "openai/gpt-oss-120b": 1729
+ },
+ "latency_s": 2.11,
+ "llm_s": 1.61,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/schedule.py",
+   "line": 3,
+   "severity": "high",
+   "category": "security",
+   "message": "Hardcoded calendar token is embedded in source code, exposing a secret credential.",
+   "suggested_fix": "Load the token from an environment variable or secure vault instead of hardcoding it.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/schedule.py",
+   "line": 17,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new function `calendar_headers`",
+   "suggested_fix": "Add unit tests that verify the returned headers contain the correct token key and value",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

@@ -1,0 +1,55 @@
+{
+ "id": "sq4",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "9603b8d039c333fe",
+ "date": "2026-11-20",
+ "tokens": 2064,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 665,
+  "openai/gpt-oss-120b": 1399
+ },
+ "latency_s": 9.1,
+ "llm_s": 11.2,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "high",
+   "category": "bug",
+   "message": "Direct string interpolation of the column name into the SQL query allows SQL injection and can cause runtime errors if an invalid column is passed.",
+   "suggested_fix": "Validate the column against an allowlist of known column names or use parameterized queries for identifiers, e.g., check column in ('id','name','email') before constructing the query.",
+   "confidence": 0.97,
+   "bumped_by_tests": false
+  },
+  {
+   "file": "shop/users_db.py",
+   "line": 34,
+   "severity": "high",
+   "category": "security",
+   "message": "Directly interpolating the column name into the SQL query allows SQL injection via ORDER BY clause.",
+   "suggested_fix": "Validate 'column' against an allowlist of known column names or construct the query using safe identifiers instead of f-string interpolation.",
+   "confidence": 0.99,
+   "bumped_by_tests": false
+  }
+ ],
+ "summary": [
+  {
+   "file": "shop/users_db.py",
+   "line": 33,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the new users_sorted function.",
+   "suggested_fix": "Add tests that verify sorting by different columns and handle invalid column names.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

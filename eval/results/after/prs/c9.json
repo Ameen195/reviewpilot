@@ -1,0 +1,34 @@
+{
+ "id": "c9",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "40e1f30be1a3444a",
+ "date": "2026-11-20",
+ "tokens": 2129,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 746,
+  "openai/gpt-oss-120b": 1383
+ },
+ "latency_s": 9.92,
+ "llm_s": 11.23,
+ "tests": {
+  "passed": 24,
+  "failed": [],
+  "error": null
+ },
+ "inline": [],
+ "summary": [
+  {
+   "file": "shop/stats.py",
+   "line": null,
+   "severity": "low",
+   "category": "tests",
+   "message": "No tests cover the updated mean function using math.fsum.",
+   "suggested_fix": "Add unit tests for mean(xs) to verify correct result and precision.",
+   "confidence": 0.9,
+   "bumped_by_tests": false
+  }
+ ],
+ "errors": [],
+ "skipped": []
+}

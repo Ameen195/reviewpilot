@@ -1,0 +1,36 @@
+{
+ "id": "lg1",
+ "commit": "fc58b37aa807812b5d4899ca68beaa0e5de1cb00",
+ "dirty": false,
+ "pr_hash": "087c6d7b5547edb0",
+ "date": "2026-11-20",
+ "tokens": 1875,
+ "tokens_by_model": {
+  "openai/gpt-oss-20b": 649,
+  "openai/gpt-oss-120b": 1226
+ },
+ "latency_s": 10.85,
+ "llm_s": 14.8,
+ "tests": {
+  "passed": 23,
+  "failed": [
+   "tests/test_orders.py::test_free_shipping - assert False"
+  ],
+  "error": null
+ },
+ "inline": [
+  {
+   "file": "shop/orders.py",
+   "line": 38,
+   "severity": "high",
+   "category": "bug",
+   "message": "The free shipping condition was changed to `total > 50`, which excludes orders exactly equal to 50, breaking the intended behavior and causing a test failure.",
+   "suggested_fix": "Change the return statement back to `return total >= 50`",
+   "confidence": 1.0,
+   "bumped_by_tests": true
+  }
+ ],
+ "summary": [],
+ "errors": [],
+ "skipped": []
+}
