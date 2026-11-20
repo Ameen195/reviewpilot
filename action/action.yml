@@ -1,0 +1,22 @@
+name: ReviewPilot
+description: AI code review on pull requests (bug, security and test-coverage reviewers) using your own Groq key.
+inputs:
+  groq_api_key:
+    description: Groq API key (store it as a repo secret).
+    required: true
+  github_token:
+    description: Token used to read the PR and post the review.
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - run: pip install "${{ github.action_path }}/.."
+      shell: bash
+    - run: python "${{ github.action_path }}/entrypoint.py"
+      shell: bash
+      env:
+        GROQ_API_KEY: ${{ inputs.groq_api_key }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}

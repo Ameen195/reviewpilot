@@ -1,6 +1,8 @@
 """Queue, worker durability, approval and posting. Offline: fakeredis, temp SQLite, fake GitHub."""
 
 import json
+import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import fakeredis
@@ -212,3 +214,14 @@ def test_approval_page_and_decision(r):
     q = {"key": "me/t#1@a", "decision": "approve"}
     assert client.post("/approvals", params=q, follow_redirects=False).status_code == 303
     assert client.post("/approvals", params=q).status_code == 404
+
+
+def test_action_run_posts_once_comment_only():
+    sys.path.insert(0, str(Path(__file__).parents[1] / "action"))
+    from entrypoint import run
+
+    pr, c = FakePR(), ctx()
+    assert run(fake_gh(pr), "me/t", c, llm_with("high", [])) == "posted"
+    assert pr.created[0]["event"] == "COMMENT" and pr.created[0]["comments"]
+    pr.reviews.append(SimpleNamespace(body=pr.created[0]["body"]))
+    assert run(fake_gh(pr), "me/t", c, llm_with("high", [])) == "already reviewed"
