@@ -1,6 +1,6 @@
 # MCP server
 
-Lets Claude Desktop (or any MCP client) inspect PRs through ReviewPilot. It runs locally over stdio.
+Lets Claude Code (tested), Claude Desktop (optional) or any MCP client inspect PRs through ReviewPilot. It runs locally over stdio.
 
 ## Tools (all read-only; nothing is ever posted to GitHub)
 
@@ -44,7 +44,7 @@ Then check with `claude mcp list` (reviewpilot should be connected) or `/mcp` in
   "mcpServers": {
     "reviewpilot": {
       "command": "uv",
-      "args": ["run", "--directory", "D:\Projects\reviewpilot", "python", "-m", "reviewpilot.mcp_server"]
+      "args": ["run", "--directory", "D:\\Projects\\reviewpilot", "python", "-m", "reviewpilot.mcp_server"]
     }
   }
 }
